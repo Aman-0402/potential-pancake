@@ -1,5 +1,6 @@
 import { useTheme } from './contexts/ThemeContext'
 import Navbar from './components/navbar/Navbar'
+import Footer from './components/footer/Footer'
 import HeroSection from './components/landing/HeroSection'
 import TrustedSection from './components/landing/TrustedSection'
 import ProblemSection from './components/landing/ProblemSection'
@@ -21,6 +22,7 @@ export default function App() {
         <InteractiveShowcase />
         <EnterpriseBentoSection />
       </main>
+      <Footer />
     </div>
   )
 }
