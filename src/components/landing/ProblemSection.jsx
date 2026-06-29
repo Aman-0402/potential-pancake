@@ -402,19 +402,22 @@ function DesktopSection({ isDark }) {
           <div className="overflow-hidden">
             <div
               ref={trackRef}
-              className="flex"
+              className="flex items-center"
               style={{
-                gap:          CARD_GAP,
-                // Center first card; math: left-padding + cards + right-padding - viewport = scrollDist
-                // Always constant regardless of viewport width
-                paddingLeft:  `calc(50vw - ${CARD_W / 2}px)`,
-                paddingRight: `calc(50vw - ${CARD_W / 2}px)`,
-                willChange:   'transform',
+                gap:        CARD_GAP,
+                // paddingLeft centers card 1 at x=0
+                // paddingRight is INTENTIONALLY removed — browsers exclude trailing
+                // flex padding from scrollWidth, causing GSAP to undershoot.
+                // A real <div> spacer at the end is included in scrollWidth correctly.
+                paddingLeft: `calc(50vw - ${CARD_W / 2}px)`,
+                willChange:  'transform',
               }}
             >
               {PROBLEMS.map((prob, i) => (
                 <HorizontalCard key={prob.title} problem={prob} isActive={i === activeIdx} isDark={isDark} />
               ))}
+              {/* Spacer ensures last card centers: scrollWidth includes this, padding-right would not */}
+              <div aria-hidden="true" style={{ width: `calc(50vw - ${CARD_W / 2}px)`, flexShrink: 0 }} />
             </div>
           </div>
 
