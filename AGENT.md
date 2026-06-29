@@ -21,6 +21,19 @@ npm run build    # Production build → dist/
 npm run preview  # Preview production build
 ```
 
+## Deployment
+Hosted on **GitHub Pages** via GitHub Actions.
+
+- **Live URL**: `https://aman-0402.github.io/potential-pancake/`
+- **Repo**: `https://github.com/Aman-0402/potential-pancake`
+- **Workflow**: `.github/workflows/deploy.yml` — triggers on push to `main`, builds with Vite, deploys `dist/` via `actions/deploy-pages`
+- **Base path**: `vite.config.js` has `base: '/potential-pancake/'` — all asset paths are subpath-prefixed
+- **SPA routing**: `public/404.html` redirects unknown paths back to root so `BrowserRouter` handles them
+
+**To enable** (one-time setup in GitHub repo settings):
+1. Settings → Pages → Source: **GitHub Actions**
+2. Push to `main` — workflow runs automatically
+
 ## Structure
 ```
 src/
