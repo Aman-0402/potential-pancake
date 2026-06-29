@@ -999,22 +999,16 @@ function useIsLg() {
 // ─── Bento grid ───────────────────────────────────────────────────────────────
 /*
   12-column layout:
-  Row 1-2: Analytics (col 1-7, rowspan 2)  | Certificate (col 7-10) | Security (col 10-13)
-  Row 2:   Analytics cont.                  | OrgMgmt (col 7-10)     | ExamBuilder (col 10-13)
-  Row 3:   Voucher (col 1-5)               | AI Proctoring (col 5-13, rowspan 2)
-  Row 4:   LiveActivity (col 1-5)          | AI cont.
-*/
-const GRID_PLACEMENTS = [
-  { column: '1 / 7',  row: '1 / 3' }, // Analytics
-  { column: '7 / 10', row: '1'     }, // Certificate
-  { column: '10 / 13',row: '1'     }, // Security
-  { column: '7 / 10', row: '2'     }, // OrgMgmt
-  { column: '10 / 13',row: '2'     }, // ExamBuilder
-  { column: '1 / 5',  row: '3'     }, // Voucher
-  { column: '5 / 13', row: '3 / 5' }, // AI Proctoring
-  { column: '1 / 5',  row: '4'     }, // LiveActivity
-]
 
+  Row 1-2: Analytics (col 1-7, span 2)   | Certificate (col 7-10) | Security (col 10-13)
+  Row 2:   Analytics cont.                | OrgMgmt (col 7-10)     | ExamBuilder (col 10-13)
+  Row 3-4: [Left flex column, col 1-5]   | AI Proctoring (col 5-13, span 2)
+             ├─ Voucher   (flex: 0 0 auto)
+             └─ LiveActivity (flex: 1)
+
+  The left column wrapper spans the same rows as AI Proctoring, so LiveActivity
+  automatically fills every pixel of remaining vertical space.
+*/
 const ACCENTS = ['#22d3ee','#f59e0b','#22d3ee','#22d3ee','#3b82f6','#8b5cf6','#f43f5e','#22d3ee']
 const LABELS  = ['Analytics dashboard','Digital Certificates','Enterprise Security','Organization Management',
                  'Exam Builder','Voucher System','AI Proctoring','Live Activity Feed']
@@ -1022,48 +1016,8 @@ const LABELS  = ['Analytics dashboard','Digital Certificates','Enterprise Securi
 function BentoGrid({ isDark }) {
   const isLg = useIsLg()
 
-  const CARDS = [
-    (gs) => (
-      <FeatureCard key={0} accent={ACCENTS[0]} gridStyle={gs} delay={0}    isDark={isDark} label={LABELS[0]}>
-        <AnalyticsDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={1} accent={ACCENTS[1]} gridStyle={gs} delay={0.08} isDark={isDark} label={LABELS[1]}>
-        <CertificateDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={2} accent={ACCENTS[2]} gridStyle={gs} delay={0.16} isDark={isDark} label={LABELS[2]}>
-        <SecurityDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={3} accent={ACCENTS[3]} gridStyle={gs} delay={0.24} isDark={isDark} label={LABELS[3]}>
-        <OrgTreeDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={4} accent={ACCENTS[4]} gridStyle={gs} delay={0.32} isDark={isDark} label={LABELS[4]}>
-        <ExamBuilderDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={5} accent={ACCENTS[5]} gridStyle={gs} delay={0.40} isDark={isDark} label={LABELS[5]}>
-        <VoucherDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={6} accent={ACCENTS[6]} gridStyle={gs} delay={0.48} isDark={isDark} label={LABELS[6]}>
-        <AIProctoringDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-    (gs) => (
-      <FeatureCard key={7} accent={ACCENTS[7]} gridStyle={gs} delay={0.56} isDark={isDark} label={LABELS[7]}>
-        <LiveActivityDemo isDark={isDark} />
-      </FeatureCard>
-    ),
-  ]
+  // Shorthand to build common FeatureCard props
+  const fc = (i, extra) => ({ accent: ACCENTS[i], delay: i * 0.08, isDark, label: LABELS[i], gridStyle: extra })
 
   if (isLg) {
     return (
@@ -1073,17 +1027,77 @@ function BentoGrid({ isDark }) {
         gridAutoRows: 'minmax(215px,auto)',
         gap: 16,
       }}>
-        {CARDS.map((render, i) =>
-          render({ gridColumn: GRID_PLACEMENTS[i].column, gridRow: GRID_PLACEMENTS[i].row })
-        )}
+        {/* Row 1-2 left: Analytics */}
+        <FeatureCard {...fc(0, { gridColumn: '1 / 7', gridRow: '1 / 3' })}>
+          <AnalyticsDemo isDark={isDark} />
+        </FeatureCard>
+
+        {/* Row 1 right: Certificate + Security */}
+        <FeatureCard {...fc(1, { gridColumn: '7 / 10', gridRow: '1' })}>
+          <CertificateDemo isDark={isDark} />
+        </FeatureCard>
+        <FeatureCard {...fc(2, { gridColumn: '10 / 13', gridRow: '1' })}>
+          <SecurityDemo isDark={isDark} />
+        </FeatureCard>
+
+        {/* Row 2 right: OrgMgmt + ExamBuilder */}
+        <FeatureCard {...fc(3, { gridColumn: '7 / 10', gridRow: '2' })}>
+          <OrgTreeDemo isDark={isDark} />
+        </FeatureCard>
+        <FeatureCard {...fc(4, { gridColumn: '10 / 13', gridRow: '2' })}>
+          <ExamBuilderDemo isDark={isDark} />
+        </FeatureCard>
+
+        {/*
+          Rows 3-4 left: flex column wrapper — same grid span as AI Proctoring.
+          Voucher is auto-height; LiveActivity stretches to fill all remaining height.
+          min-height:0 on wrapper prevents flex overflow blowout.
+        */}
+        <div style={{
+          gridColumn: '1 / 5',
+          gridRow:    '3 / 5',
+          display:        'flex',
+          flexDirection:  'column',
+          gap:            16,
+          minHeight:      0,
+        }}>
+          {/* Voucher — natural height, does not grow */}
+          <FeatureCard {...fc(5, { flexShrink: 0 })}>
+            <VoucherDemo isDark={isDark} />
+          </FeatureCard>
+
+          {/* LiveActivity — consumes ALL remaining vertical space */}
+          <FeatureCard {...fc(7, { flex: 1, minHeight: 0 })}>
+            <LiveActivityDemo isDark={isDark} />
+          </FeatureCard>
+        </div>
+
+        {/* Rows 3-4 right: AI Proctoring */}
+        <FeatureCard {...fc(6, { gridColumn: '5 / 13', gridRow: '3 / 5' })}>
+          <AIProctoringDemo isDark={isDark} />
+        </FeatureCard>
       </div>
     )
   }
 
-  // Tablet / mobile — auto flow
+  // ── Tablet / mobile: auto-flow, single or 2 columns ──────────────────────
+  const DEMOS = [
+    <AnalyticsDemo isDark={isDark} />,
+    <CertificateDemo isDark={isDark} />,
+    <SecurityDemo isDark={isDark} />,
+    <OrgTreeDemo isDark={isDark} />,
+    <ExamBuilderDemo isDark={isDark} />,
+    <VoucherDemo isDark={isDark} />,
+    <AIProctoringDemo isDark={isDark} />,
+    <LiveActivityDemo isDark={isDark} />,
+  ]
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {CARDS.map((render) => render({ minHeight: 260 }))}
+      {DEMOS.map((demo, i) => (
+        <FeatureCard key={i} {...fc(i, { minHeight: i === 6 ? 420 : 280 })}>
+          {demo}
+        </FeatureCard>
+      ))}
     </div>
   )
 }
