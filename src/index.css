@@ -48,7 +48,7 @@ html:not(.dark) {
 
 @layer base {
   * { @apply box-border m-0 p-0; }
-  body { @apply bg-dark-950 text-dark-100 font-sans antialiased; }
+  body { @apply bg-dark-950 text-dark-100 font-sans antialiased; overflow-x: hidden; }
 
   /* text-white adapts to near-black in light mode */
   html:not(.dark) .text-white {

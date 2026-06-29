@@ -1,30 +1,23 @@
-import { useRef, useState } from 'react'
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  useMotionValueEvent,
-  useReducedMotion,
-} from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useTheme } from '../../contexts/ThemeContext'
 import {
   AlertTriangle, GitBranch, Shield, Building2,
   TrendingDown, Users,
 } from 'lucide-react'
 
+// Register once at module level — safe even if imported multiple times
+gsap.registerPlugin(ScrollTrigger)
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 const cv = (n, op = 1) =>
   op < 1 ? `rgb(var(--c-dark-${n}) / ${op})` : `rgb(var(--c-dark-${n}))`
 
-const EASE       = [0.25, 0.4, 0.25, 1]
-const CARD_W     = 480
-const CARD_GAP   = 32
-const CARD_STRIDE = CARD_W + CARD_GAP
-
-// 320 vh total ≈ 220 vh scroll fuel ÷ 5 transitions = ~44 vh per card flip
-// comfortable: ~4 wheel ticks per card at 1080 px viewport
-const SECTION_H  = '320vh'
+const EASE   = [0.25, 0.4, 0.25, 1]
+const CARD_W = 480
+const CARD_GAP = 48   // slightly wider gap for breathing room
 
 // ─── Problem data ─────────────────────────────────────────────────────────────
 const PROBLEMS = [
@@ -84,6 +77,7 @@ const PROBLEMS = [
   },
 ]
 
+// ─── Heading config ───────────────────────────────────────────────────────────
 const HEADING_LINES = [
   ['Managing', ' ', 'Online', ' ', 'Exams'],
   ["Shouldn't", ' ', 'Be', ' ', 'This', ' ', 'Difficult.'],
@@ -101,21 +95,20 @@ const probGradStyle = {
 // ─── Motion variants ──────────────────────────────────────────────────────────
 const charVar = {
   hidden:  { opacity:0, y:16, filter:'blur(4px)' },
-  visible: { opacity:1, y:0,  filter:'blur(0px)',
-    transition:{ duration:0.3, ease:EASE } },
+  visible: { opacity:1, y:0,  filter:'blur(0px)', transition:{ duration:0.3, ease:EASE } },
 }
 const headingStagger = {
   hidden:  {},
   visible: { transition:{ staggerChildren:0.022, delayChildren:0.2 } },
 }
 
-// ─── Background ───────────────────────────────────────────────────────────────
+// ─── SectionBg ────────────────────────────────────────────────────────────────
 function SectionBg({ isDark }) {
-  const gridC = isDark ? 'rgba(239,68,68,0.025)' : 'rgba(239,68,68,0.04)'
+  const gc = isDark ? 'rgba(239,68,68,0.025)' : 'rgba(239,68,68,0.04)'
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
       <div className="absolute inset-0" style={{
-        backgroundImage:`linear-gradient(${gridC} 1px,transparent 1px),linear-gradient(90deg,${gridC} 1px,transparent 1px)`,
+        backgroundImage:`linear-gradient(${gc} 1px,transparent 1px),linear-gradient(90deg,${gc} 1px,transparent 1px)`,
         backgroundSize:'64px 64px',
       }} />
       <div className="absolute inset-0 opacity-[0.02]" style={{
@@ -133,13 +126,13 @@ function SectionHeader({ isDark }) {
     : { background:'rgba(239,68,68,0.06)', border:'1px solid rgba(239,68,68,0.2)',  color:'#dc2626' }
 
   return (
-    <div className="text-center mb-10 px-4">
+    <div className="text-center mb-8 px-4">
       <motion.div
         initial={{ opacity:0, y:-14, filter:'blur(6px)' }}
-        whileInView={{ opacity:1, y:0,   filter:'blur(0px)' }}
+        whileInView={{ opacity:1, y:0, filter:'blur(0px)' }}
         viewport={{ once:true }}
         transition={{ duration:0.5, ease:EASE }}
-        className="mb-5"
+        className="mb-4"
       >
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
           style={{ backdropFilter:'blur(12px)', ...badge }}>
@@ -153,7 +146,7 @@ function SectionHeader({ isDark }) {
 
       <motion.h2 id="problem-heading"
         variants={headingStagger} initial="hidden" whileInView="visible" viewport={{ once:true }}
-        className="text-4xl sm:text-5xl lg:text-[52px] font-extrabold leading-[1.1] tracking-tight mb-4 text-white"
+        className="text-4xl sm:text-5xl lg:text-[50px] font-extrabold leading-[1.1] tracking-tight mb-3 text-white"
       >
         {HEADING_LINES.map((words, li) => (
           <span key={li} className="block">
@@ -184,9 +177,9 @@ function SectionHeader({ isDark }) {
 
       <motion.p
         initial={{ opacity:0, y:20, filter:'blur(6px)' }}
-        whileInView={{ opacity:1, y:0,  filter:'blur(0px)' }}
+        whileInView={{ opacity:1, y:0, filter:'blur(0px)' }}
         viewport={{ once:true }}
-        transition={{ duration:0.55, delay:0.45, ease:EASE }}
+        transition={{ duration:0.55, delay:0.4, ease:EASE }}
         className="text-sm text-dark-400 leading-relaxed max-w-lg mx-auto"
       >
         Many organizations still struggle with disconnected tools, manual certificate
@@ -196,54 +189,55 @@ function SectionHeader({ isDark }) {
   )
 }
 
-// ─── Vertical progress sidebar ────────────────────────────────────────────────
+// ─── VerticalTrack (left sidebar) ────────────────────────────────────────────
 function VerticalTrack({ activeIdx }) {
   return (
-    <div
-      aria-hidden="true"
-      className="absolute left-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3"
-      style={{ zIndex: 10 }}
-    >
+    <div aria-hidden="true"
+      className="absolute left-8 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3 z-20">
       {PROBLEMS.map((p, i) => (
         <div key={i} className="flex items-center gap-2.5">
-          <motion.div
-            animate={{
+          <div
+            className="rounded-full transition-all duration-300"
+            style={{
               height:     i === activeIdx ? 22 : 8,
               width:      i === activeIdx ? 3  : 2,
               background: i === activeIdx ? p.accent : cv(700, 0.3),
               opacity:    i === activeIdx ? 1 : 0.4,
             }}
-            transition={{ duration: 0.35, ease: EASE }}
-            className="rounded-full"
           />
-          <motion.span
-            animate={{ opacity: i === activeIdx ? 0.7 : 0, x: i === activeIdx ? 0 : -4 }}
-            transition={{ duration: 0.25 }}
-            className="text-[10px] font-semibold tabular-nums"
-            style={{ color: p.accent }}
-          >{p.num}</motion.span>
+          <span
+            className="text-[10px] font-semibold tabular-nums transition-all duration-300"
+            style={{ color: p.accent, opacity: i === activeIdx ? 0.8 : 0 }}
+          >{p.num}</span>
         </div>
       ))}
     </div>
   )
 }
 
-// ─── Progress dots ────────────────────────────────────────────────────────────
+// ─── ProgressDots ────────────────────────────────────────────────────────────
 function ProgressDots({ activeIdx }) {
+  const isLast = activeIdx === PROBLEMS.length - 1
   return (
-    <div className="flex items-center gap-2" role="tablist" aria-label="Problem cards">
-      {PROBLEMS.map((p, i) => (
-        <motion.div key={i}
-          role="tab" aria-selected={i === activeIdx} aria-label={`Problem ${i+1}`}
-          animate={{
-            width:      i === activeIdx ? 28 : 8,
-            background: i === activeIdx ? p.accent : cv(700, 0.35),
-            opacity:    i === activeIdx ? 1 : 0.45,
-          }}
-          transition={{ duration: 0.3, ease: EASE }}
-          className="h-2 rounded-full"
-        />
-      ))}
+    <div className="flex flex-col items-center gap-3 mt-6">
+      <div className="flex items-center gap-2" role="tablist" aria-label="Problem cards">
+        {PROBLEMS.map((p, i) => (
+          <div key={i} role="tab" aria-selected={i === activeIdx}
+            className="h-2 rounded-full transition-all duration-300"
+            style={{
+              width:      i === activeIdx ? 28 : 8,
+              background: i === activeIdx ? p.accent : cv(700, 0.35),
+              opacity:    i === activeIdx ? 1 : 0.45,
+            }}
+          />
+        ))}
+      </div>
+      <p className="text-[11px] tracking-widest uppercase transition-all duration-300"
+        style={{ color: cv(600), opacity: isLast ? 0 : 0.6 }}
+        aria-hidden="true"
+      >
+        {isLast ? 'keep scrolling ↓' : 'scroll to explore ↓'}
+      </p>
     </div>
   )
 }
@@ -257,28 +251,29 @@ function HorizontalCard({ problem, isActive, isDark }) {
 
   return (
     <motion.div
-      animate={{ scale:isActive?1:0.88, opacity:isActive?1:0.3 }}
-      transition={{ duration:0.45, ease:EASE }}
+      animate={{ scale: isActive ? 1 : 0.88, opacity: isActive ? 1 : 0.28 }}
+      transition={{ duration: 0.45, ease: EASE }}
       className="shrink-0 flex flex-col rounded-3xl p-8"
       style={{
         width:          CARD_W,
-        minHeight:      290,
+        minHeight:      300,
         background:     isActive ? bg : cv(900, 0.5),
         border:         `1px solid ${isActive ? border : cv(700, 0.1)}`,
         backdropFilter: 'blur(20px)',
         boxShadow:      isActive
           ? `0 24px 80px rgba(0,0,0,${isDark?0.55:0.12}),0 0 60px ${glow},inset 0 1px 0 rgba(255,255,255,${isDark?0.07:0.5})`
-          : `0 4px 20px rgba(0,0,0,${isDark?0.2:0.04})`,
+          : `0 4px 20px rgba(0,0,0,${isDark?0.15:0.04})`,
       }}
     >
       <div className="flex items-start justify-between mb-6">
         <motion.div
-          animate={{ scale:isActive?1:0.85, boxShadow:isActive?`0 0 28px ${glow}`:'none' }}
-          transition={{ duration:0.45 }}
+          animate={{ scale: isActive ? 1 : 0.85, boxShadow: isActive ? `0 0 28px ${glow}` : 'none' }}
+          transition={{ duration: 0.4 }}
           className="w-14 h-14 rounded-2xl flex items-center justify-center"
-          style={{ background:bg, border:`1px solid ${isActive?border:cv(700,0.12)}` }}
+          style={{ background: bg, border: `1px solid ${isActive ? border : cv(700, 0.1)}` }}
         >
-          <motion.div animate={isActive?{rotate:[-8,8,0]}:{rotate:0}} transition={{ duration:0.5, delay:0.1 }}>
+          <motion.div animate={isActive ? { rotate: [-8, 8, 0] } : { rotate: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}>
             <Icon style={{ width:24, height:24 }} className={color} />
           </motion.div>
         </motion.div>
@@ -296,136 +291,174 @@ function HorizontalCard({ problem, isActive, isDark }) {
       <h3 className="text-xl font-bold text-white mb-3 leading-snug">{title}</h3>
       <p className="text-sm text-dark-400 leading-relaxed flex-1">{desc}</p>
 
-      <motion.div
-        animate={{ width:isActive?'100%':'20%', opacity:isActive?1:0.2 }}
-        transition={{ duration:0.55, ease:EASE }}
-        className="mt-6 h-0.5 rounded-full"
-        style={{ background:`linear-gradient(to right,${accent},transparent)` }}
+      <div
+        className="mt-6 h-0.5 rounded-full transition-all duration-500"
+        style={{
+          width:      isActive ? '100%' : '20%',
+          opacity:    isActive ? 1 : 0.2,
+          background: `linear-gradient(to right,${accent},transparent)`,
+        }}
       />
     </motion.div>
   )
 }
 
-// ─── HorizontalScroll (scroll-trigger, 320 vh) ────────────────────────────────
-function HorizontalScroll({ isDark }) {
-  const sectionRef = useRef(null)
-  const [activeIdx, setActiveIdx] = useState(0)
+// ─── Desktop section — GSAP ScrollTrigger pin ─────────────────────────────────
+function DesktopSection({ isDark }) {
+  const sectionRef = useRef(null)   // GSAP trigger + pin target
+  const trackRef   = useRef(null)   // GSAP translates this
+  const [activeIdx, setActiveIdx]   = useState(0)
 
-  const { scrollYProgress } = useScroll({
-    target:  sectionRef,
-    offset:  ['start start', 'end end'],
-  })
+  useEffect(() => {
+    const section = sectionRef.current
+    const track   = trackRef.current
+    if (!section || !track) return
 
-  // useTransform gives raw linear mapping; useSpring smooths it
-  const xRaw = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, -(PROBLEMS.length - 1) * CARD_STRIDE],
-  )
-  const x = useSpring(xRaw, { stiffness: 180, damping: 32, mass: 0.7 })
+    // Calculate scroll distance dynamically
+    const getScrollDist = () => track.scrollWidth - window.innerWidth
 
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    setActiveIdx(Math.min(Math.round(v * (PROBLEMS.length - 1)), PROBLEMS.length - 1))
-  })
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[ProblemSection]', {
+        viewportWidth:  window.innerWidth,
+        trackWidth:     track.scrollWidth,
+        scrollDistance: getScrollDist(),
+        sectionHeight:  window.innerHeight + getScrollDist(),
+      })
+    }
 
-  const p        = PROBLEMS[activeIdx]
-  const glow     = isDark ? p.glowD.replace('0.18)','0.12)') : p.glowL.replace('0.09)','0.06)')
-  const isLast   = activeIdx === PROBLEMS.length - 1
+    const ctx = gsap.context(() => {
+      gsap.to(track, {
+        // Translate exactly by the scroll overflow — first card → last card centered
+        x: () => -getScrollDist(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger:           section,
+          start:             'top top',
+          // end dynamically accounts for any viewport/zoom change
+          end:               () => '+=' + getScrollDist(),
+          pin:               true,       // pins section in place
+          pinSpacing:        true,       // GSAP adds spacer = scrollDist, removes blank gap
+          scrub:             1,          // 1s lag for smooth feel
+          anticipatePin:     1,          // starts pinning slightly early to avoid flicker
+          invalidateOnRefresh: true,     // recalculates x and end on ScrollTrigger.refresh()
+          onUpdate: (self) => {
+            setActiveIdx(Math.min(
+              Math.round(self.progress * (PROBLEMS.length - 1)),
+              PROBLEMS.length - 1,
+            ))
+          },
+        },
+      })
+    }, section)
+
+    // Recalculate on resize/orientation change
+    const onResize = () => ScrollTrigger.refresh()
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
+
+    return () => {
+      ctx.revert()   // kills ScrollTrigger + removes GSAP transforms
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onResize)
+    }
+  }, [])
+
+  const p = PROBLEMS[activeIdx]
+  const accentGlow = isDark
+    ? p.glowD.replace('0.18)', '0.1)')
+    : p.glowL.replace('0.09)', '0.05)')
 
   return (
-    <div ref={sectionRef} style={{ height: SECTION_H }} className="relative">
-      {/* ── Sticky viewport ── */}
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col bg-dark-950">
+    // NO overflow-hidden here — GSAP needs to position:fixed this element
+    // overflow-hidden is only on the inner track wrapper to clip off-screen cards
+    <section
+      ref={sectionRef}
+      aria-labelledby="problem-heading"
+      className="relative bg-dark-950"
+    >
+      {/* Dynamic accent orb — crossfades between card colors */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none transition-all duration-700"
+        style={{
+          background: `radial-gradient(ellipse 80% 60% at 50% 10%,${accentGlow} 0%,transparent 70%)`,
+          zIndex: 0,
+        }}
+      />
 
-        {/* Dynamic accent orb that crossfades between card colors */}
-        <motion.div aria-hidden="true" className="absolute pointer-events-none"
-          animate={{ background:`radial-gradient(ellipse 70% 55% at 50% 5%,${glow} 0%,transparent 70%)` }}
-          transition={{ duration:0.7 }}
-          style={{ inset:0, zIndex:0 }}
-        />
+      <SectionBg isDark={isDark} />
+      <VerticalTrack activeIdx={activeIdx} />
 
-        {/* Left vertical progress track */}
-        <VerticalTrack activeIdx={activeIdx} />
+      {/* Divider top */}
+      <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
+        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(239,68,68,0.25)':'rgba(239,68,68,0.15)'},transparent)`, zIndex:10 }} />
 
-        <SectionBg isDark={isDark} />
-
-        <div className="relative flex flex-col flex-1 justify-center" style={{ zIndex:1 }}>
+      {/* Viewport-height content — this is what the user sees while pinned */}
+      <div className="relative h-screen flex flex-col" style={{ zIndex: 1 }}>
+        <div className="flex flex-col flex-1 justify-center py-8 min-h-0">
           <SectionHeader isDark={isDark} />
 
-          {/* Card track */}
+          {/* overflow-hidden ONLY on this wrapper — clips cards that are off-screen */}
           <div className="overflow-hidden">
-            <motion.div
+            <div
+              ref={trackRef}
+              className="flex"
               style={{
-                display:    'flex',
-                gap:        CARD_GAP,
-                x,
-                marginLeft: `calc(50vw - ${CARD_W / 2}px)`,
-                willChange: 'transform',
+                gap:          CARD_GAP,
+                // Center first card; math: left-padding + cards + right-padding - viewport = scrollDist
+                // Always constant regardless of viewport width
+                paddingLeft:  `calc(50vw - ${CARD_W / 2}px)`,
+                paddingRight: `calc(50vw - ${CARD_W / 2}px)`,
+                willChange:   'transform',
               }}
             >
               {PROBLEMS.map((prob, i) => (
-                <HorizontalCard key={prob.title} problem={prob} isActive={i===activeIdx} isDark={isDark} />
+                <HorizontalCard key={prob.title} problem={prob} isActive={i === activeIdx} isDark={isDark} />
               ))}
-            </motion.div>
-          </div>
-
-          {/* Bottom controls */}
-          <div className="flex flex-col items-center gap-3 mt-8">
-            <ProgressDots activeIdx={activeIdx} />
-
-            {/* Scroll hint / last-card CTA */}
-            <div className="h-5 flex items-center justify-center">
-              {isLast ? (
-                <motion.p
-                  key="cta"
-                  initial={{ opacity:0, y:6 }}
-                  animate={{ opacity:1, y:0 }}
-                  className="text-[11px] text-dark-500 tracking-widest uppercase"
-                >
-                  keep scrolling — solution is next ↓
-                </motion.p>
-              ) : (
-                <motion.div
-                  key="hint"
-                  animate={{ y:[0,4,0] }}
-                  transition={{ duration:1.6, repeat:Infinity, ease:'easeInOut' }}
-                  className="text-[11px] text-dark-600 tracking-widest uppercase flex items-center gap-1"
-                >
-                  <span>scroll to explore</span><span>↓</span>
-                </motion.div>
-              )}
             </div>
           </div>
+
+          <ProgressDots activeIdx={activeIdx} />
         </div>
       </div>
-    </div>
+
+      {/* Divider bottom */}
+      <div aria-hidden="true" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
+        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(239,68,68,0.18)':'rgba(239,68,68,0.1)'},transparent)`, zIndex:10 }} />
+    </section>
   )
 }
 
-// ─── Vertical fallback (mobile + reduced-motion) ──────────────────────────────
-function VerticalCards({ isDark }) {
+// ─── Mobile / reduced-motion fallback ─────────────────────────────────────────
+function MobileSection({ isDark }) {
   return (
-    <div className="flex flex-col gap-4 max-w-xl mx-auto px-4">
-      {PROBLEMS.map((p, i) => (
-        <motion.div key={p.title}
-          initial={{ opacity:0, y:20 }}
-          whileInView={{ opacity:1, y:0 }}
-          viewport={{ once:true, margin:'-30px' }}
-          transition={{ duration:0.45, delay:i*0.07, ease:EASE }}
-          className="flex items-start gap-4 rounded-2xl p-5"
-          style={{ background:cv(900,0.7), border:`1px solid ${cv(700,0.18)}`, backdropFilter:'blur(14px)' }}
-        >
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background:isDark?p.bgD:p.bgL, border:`1px solid ${isDark?p.borderD:p.borderL}` }}>
-            <p.Icon style={{ width:18, height:18 }} className={p.color} />
-          </div>
-          <div>
-            <span className="text-sm font-semibold text-white mb-1 block">{p.title}</span>
-            <span className="text-xs text-dark-500 leading-relaxed">{p.desc}</span>
-          </div>
-        </motion.div>
-      ))}
-    </div>
+    <section aria-labelledby="problem-heading-m" className="relative bg-dark-950 py-20">
+      <SectionBg isDark={isDark} />
+      <div className="relative max-w-xl mx-auto px-4" style={{ zIndex: 1 }}>
+        <SectionHeader isDark={isDark} />
+        <div className="flex flex-col gap-4 mt-2">
+          {PROBLEMS.map((p, i) => (
+            <motion.div key={p.title}
+              initial={{ opacity:0, y:20 }}
+              whileInView={{ opacity:1, y:0 }}
+              viewport={{ once:true, margin:'-30px' }}
+              transition={{ duration:0.45, delay:i*0.07, ease:EASE }}
+              className="flex items-start gap-4 rounded-2xl p-5"
+              style={{ background:cv(900,0.7), border:`1px solid ${cv(700,0.18)}`, backdropFilter:'blur(14px)' }}
+            >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background:isDark?p.bgD:p.bgL, border:`1px solid ${isDark?p.borderD:p.borderL}` }}>
+                <p.Icon style={{ width:18, height:18 }} className={p.color} />
+              </div>
+              <div>
+                <span className="text-sm font-semibold text-white mb-1 block">{p.title}</span>
+                <span className="text-xs text-dark-500 leading-relaxed">{p.desc}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -436,28 +469,18 @@ export default function ProblemSection() {
   const reduced   = useReducedMotion()
 
   return (
-    <section className="relative overflow-hidden bg-dark-950" aria-labelledby="problem-heading">
-      {/* Divider top */}
-      <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px z-10"
-        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(239,68,68,0.25)':'rgba(239,68,68,0.15)'},transparent)` }} />
-
-      {/* Desktop: scroll-trigger horizontal pan, 320 vh */}
+    <>
+      {/* Desktop: GSAP pin + horizontal scroll */}
       {!reduced && (
         <div className="hidden lg:block">
-          <HorizontalScroll isDark={isDark} />
+          <DesktopSection isDark={isDark} />
         </div>
       )}
 
       {/* Mobile / reduced-motion: vertical stacked */}
-      <div className={`${!reduced ? 'lg:hidden' : ''} py-20`} style={{ position:'relative', zIndex:1 }}>
-        <SectionBg isDark={isDark} />
-        <SectionHeader isDark={isDark} />
-        <VerticalCards isDark={isDark} />
+      <div className={!reduced ? 'lg:hidden' : ''}>
+        <MobileSection isDark={isDark} />
       </div>
-
-      {/* Divider bottom */}
-      <div aria-hidden="true" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px z-10"
-        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(239,68,68,0.18)':'rgba(239,68,68,0.1)'},transparent)` }} />
-    </section>
+    </>
   )
 }
