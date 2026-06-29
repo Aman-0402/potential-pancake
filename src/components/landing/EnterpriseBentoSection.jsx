@@ -719,40 +719,68 @@ function AIProctoringDemo({ isDark }) {
 }
 
 // ─── Card 8: Live Activity ────────────────────────────────────────────────────
-const BASE_FEED = [
-  { type: 'exam',   text: 'Priya K. passed AWS CPP',         time: '2s ago',  color: '#10b981', Icon: CheckCircle },
-  { type: 'cert',   text: 'Certificate issued — Ahmed A.',    time: '18s ago', color: '#f59e0b', Icon: Award       },
-  { type: 'join',   text: 'James R. joined ISO 27001',        time: '41s ago', color: '#3b82f6', Icon: Users       },
-  { type: 'voucher',text: 'Voucher batch generated (50)',      time: '1m ago',  color: '#8b5cf6', Icon: Tag         },
-  { type: 'cert',   text: 'Certificate issued — Sara M.',     time: '2m ago',  color: '#f59e0b', Icon: Award       },
-  { type: 'exam',   text: 'Chen W. passed React Dev',         time: '3m ago',  color: '#10b981', Icon: CheckCircle },
-  { type: 'org',    text: 'New organization: TechStart Ltd',  time: '5m ago',  color: '#22d3ee', Icon: Building2   },
+const FEED_ITEMS = [
+  { text: 'Maria L. passed ISO 27001',       time: 'just now', color: '#10b981', Icon: CheckCircle },
+  { text: 'Ali H. joined AWS CPP',           time: '4s ago',   color: '#3b82f6', Icon: Users       },
+  { text: 'James R. completed Python Dev',   time: '9s ago',   color: '#10b981', Icon: CheckCircle },
+  { text: 'Priya K. generated 50 vouchers',  time: '15s ago',  color: '#8b5cf6', Icon: Tag         },
+  { text: 'Certificate issued — Sara M.',    time: '24s ago',  color: '#f59e0b', Icon: Award       },
+  { text: 'TechCorp added 12 new users',     time: '38s ago',  color: '#22d3ee', Icon: Building2   },
+  { text: 'Chen W. passed React Dev',        time: '1m ago',   color: '#10b981', Icon: CheckCircle },
+  { text: 'Voucher batch (100) created',     time: '2m ago',   color: '#8b5cf6', Icon: Tag         },
+  { text: 'New org: FinGroup Ltd onboarded', time: '3m ago',   color: '#22d3ee', Icon: Building2   },
+  { text: 'Ahmed A. earned Distinction',     time: '4m ago',   color: '#f59e0b', Icon: Award       },
 ]
 
-const NEW_ITEMS = [
-  { type: 'exam', text: 'Maria L. passed ISO 27001', time: 'just now', color: '#10b981', Icon: CheckCircle },
-  { type: 'join', text: 'Ali H. joined AWS CPP',     time: 'just now', color: '#3b82f6', Icon: Users       },
-]
+// Doubled list → seamless loop: animate translateY 0 → -50%
+const FEED_DOUBLED = [...FEED_ITEMS, ...FEED_ITEMS]
 
 function LiveActivityDemo({ isDark }) {
-  const ref      = useRef(null)
-  const inView   = useInView(ref, { once: true })
-  const [feed,   setFeed]   = useState(BASE_FEED.slice(0, 5))
-  const [newIdx, setNewIdx] = useState(0)
+  const reduced                          = useReducedMotion()
+  const [paused,      setPaused]         = useState(false)
+  const [highlighted, setHighlighted]    = useState(null)
 
+  // Inject CSS keyframe once into <head>
   useEffect(() => {
-    if (!inView) return
+    const id = 'lfa-kf'
+    if (document.getElementById(id)) return
+    const el = document.createElement('style')
+    el.id    = id
+    el.textContent = `
+      @keyframes lfaScrollUp {
+        from { transform: translateY(0); }
+        to   { transform: translateY(-50%); }
+      }
+      .lfa-track {
+        animation: lfaScrollUp 24s linear infinite;
+        will-change: transform;
+      }
+      .lfa-track.lfa-paused {
+        animation-play-state: paused;
+      }
+    `
+    document.head.appendChild(el)
+    return () => document.getElementById(id)?.remove()
+  }, [])
+
+  // Random highlight pulse — makes feed feel alive
+  useEffect(() => {
+    if (reduced) return
     const t = setInterval(() => {
-      const item = NEW_ITEMS[newIdx % NEW_ITEMS.length]
-      setFeed(prev => [{ ...item, time: 'just now' }, ...prev.slice(0, 4)])
-      setNewIdx(i => i + 1)
-    }, 2800)
+      const idx = Math.floor(Math.random() * FEED_ITEMS.length)
+      setHighlighted(idx)
+      const clr = setTimeout(() => setHighlighted(null), 1100)
+      return () => clearTimeout(clr)
+    }, 3200)
     return () => clearInterval(t)
-  }, [inView, newIdx])
+  }, [reduced])
+
+  const cardBg = isDark ? 'rgba(6,10,24,0.88)' : 'rgba(255,255,255,0.92)'
 
   return (
-    <div className="p-5 h-full flex flex-col gap-3" ref={ref}>
-      <div className="flex items-center justify-between">
+    <div className="p-5 flex flex-col" style={{ height: '100%' }}>
+      {/* Fixed header — never moves */}
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center"
             style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.2)' }}>
@@ -763,40 +791,65 @@ function LiveActivityDemo({ isDark }) {
             <div className="text-[10px]" style={{ color: cv(400) }}>Platform-wide events</div>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-semibold"
-          style={{ color: '#22c55e' }}>
+        <div className="flex items-center gap-1.5 text-[10px] font-semibold" style={{ color: '#22c55e' }}>
           <motion.div className="w-1.5 h-1.5 rounded-full bg-green-400"
             animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
           Live
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col gap-1.5 overflow-hidden">
-        <AnimatePresence>
-          {feed.map((item, i) => (
-            <motion.div key={item.text + item.time}
-              layout
-              initial={{ opacity: 0, y: -20, scale: 0.96 }}
-              animate={{ opacity: 1,  y: 0,   scale: 1    }}
-              exit={{    opacity: 0,  y: 20,   scale: 0.95 }}
-              transition={{ duration: 0.35, ease: EASE }}
-              className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl"
-              style={{
-                background: i === 0 && item.time === 'just now'
-                  ? `${item.color}0a` : isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.025)',
-                border: `1px solid ${i === 0 && item.time === 'just now' ? `${item.color}20` : 'transparent'}`,
-              }}>
-              <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                style={{ background: `${item.color}15` }}>
-                <item.Icon style={{ width: 11, height: 11, color: item.color }} />
+      {/* Feed viewport — overflow:hidden, no scrollbar */}
+      <div
+        className="flex-1 relative"
+        style={{ overflow: 'hidden' }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {/* Top fade mask */}
+        <div aria-hidden className="absolute top-0 left-0 right-0 h-7 pointer-events-none z-10"
+          style={{ background: `linear-gradient(to bottom,${cardBg},transparent)` }} />
+        {/* Bottom fade mask */}
+        <div aria-hidden className="absolute bottom-0 left-0 right-0 h-7 pointer-events-none z-10"
+          style={{ background: `linear-gradient(to top,${cardBg},transparent)` }} />
+
+        {/* Scrolling track: [items × 2] → animate 0 to -50% = perfect loop */}
+        <div className={reduced ? '' : `lfa-track${paused ? ' lfa-paused' : ''}`}>
+          {FEED_DOUBLED.map((item, i) => {
+            const isHot = !reduced && highlighted === (i % FEED_ITEMS.length)
+            return (
+              <div
+                key={i}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl mb-1"
+                style={{
+                  background:  isHot ? `${item.color}0e` : 'transparent',
+                  border:      `1px solid ${isHot ? `${item.color}28` : 'transparent'}`,
+                  transition:  'background 0.3s ease, border-color 0.3s ease',
+                }}
+              >
+                <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: `${item.color}15` }}>
+                  <motion.div
+                    animate={isHot ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <item.Icon style={{ width: 11, height: 11, color: item.color }} />
+                  </motion.div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div
+                    className="text-[11px] font-medium truncate"
+                    style={{ color: isHot ? 'white' : cv(300), transition: 'color 0.3s ease' }}
+                  >
+                    {item.text}
+                  </div>
+                </div>
+                <div className="text-[9px] flex-shrink-0" style={{ color: cv(500) }}>
+                  {item.time}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-medium text-white truncate">{item.text}</div>
-              </div>
-              <div className="text-[9px] flex-shrink-0" style={{ color: cv(500) }}>{item.time}</div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
