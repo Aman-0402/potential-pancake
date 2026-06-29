@@ -3,6 +3,7 @@ import HeroSection from './components/landing/HeroSection'
 import TrustedSection from './components/landing/TrustedSection'
 import ProblemSection from './components/landing/ProblemSection'
 import SolutionSection from './components/landing/SolutionSection'
+import InteractiveShowcase from './components/landing/InteractiveShowcase'
 import { Sun, Moon } from 'lucide-react'
 
 function ThemeToggle() {
@@ -33,6 +34,7 @@ export default function App() {
       <TrustedSection />
       <ProblemSection />
       <SolutionSection />
+      <InteractiveShowcase />
     </>
   )
 }
