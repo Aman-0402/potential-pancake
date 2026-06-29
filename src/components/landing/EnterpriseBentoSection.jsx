@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-mot
 import { useTheme } from '../../contexts/ThemeContext'
 import {
   BarChart2, Award, Shield, Building2, FileText, Tag,
-  Eye, Activity, CheckCircle, Lock, Users, TrendingUp,
+  Eye, CheckCircle, Lock, Users, TrendingUp,
   Zap, AlertTriangle, Globe, Copy, Bell, Database,
 } from 'lucide-react'
 
@@ -723,143 +723,6 @@ function AIProctoringDemo({ isDark }) {
   )
 }
 
-// ─── Card 8: Live Activity ────────────────────────────────────────────────────
-const FEED_ITEMS = [
-  { text: 'Maria L. passed ISO 27001',       time: 'just now', color: '#10b981', Icon: CheckCircle },
-  { text: 'Ali H. joined AWS CPP',           time: '4s ago',   color: '#3b82f6', Icon: Users       },
-  { text: 'James R. completed Python Dev',   time: '9s ago',   color: '#10b981', Icon: CheckCircle },
-  { text: 'Priya K. generated 50 vouchers',  time: '15s ago',  color: '#8b5cf6', Icon: Tag         },
-  { text: 'Certificate issued — Sara M.',    time: '24s ago',  color: '#f59e0b', Icon: Award       },
-  { text: 'TechCorp added 12 new users',     time: '38s ago',  color: '#22d3ee', Icon: Building2   },
-  { text: 'Chen W. passed React Dev',        time: '1m ago',   color: '#10b981', Icon: CheckCircle },
-  { text: 'Voucher batch (100) created',     time: '2m ago',   color: '#8b5cf6', Icon: Tag         },
-  { text: 'New org: FinGroup Ltd onboarded', time: '3m ago',   color: '#22d3ee', Icon: Building2   },
-  { text: 'Ahmed A. earned Distinction',     time: '4m ago',   color: '#f59e0b', Icon: Award       },
-]
-
-// Doubled list → seamless loop: animate translateY 0 → -50%
-const FEED_DOUBLED = [...FEED_ITEMS, ...FEED_ITEMS]
-
-function LiveActivityDemo({ isDark }) {
-  const reduced                          = useReducedMotion()
-  const [paused,      setPaused]         = useState(false)
-  const [highlighted, setHighlighted]    = useState(null)
-
-  // Inject CSS keyframe once into <head>
-  useEffect(() => {
-    const id = 'lfa-kf'
-    if (document.getElementById(id)) return
-    const el = document.createElement('style')
-    el.id    = id
-    el.textContent = `
-      @keyframes lfaScrollUp {
-        from { transform: translateY(0); }
-        to   { transform: translateY(-50%); }
-      }
-      .lfa-track {
-        animation: lfaScrollUp 24s linear infinite;
-        will-change: transform;
-      }
-      .lfa-track.lfa-paused {
-        animation-play-state: paused;
-      }
-    `
-    document.head.appendChild(el)
-    return () => document.getElementById(id)?.remove()
-  }, [])
-
-  // Random highlight pulse — makes feed feel alive
-  useEffect(() => {
-    if (reduced) return
-    const t = setInterval(() => {
-      const idx = Math.floor(Math.random() * FEED_ITEMS.length)
-      setHighlighted(idx)
-      const clr = setTimeout(() => setHighlighted(null), 1100)
-      return () => clearTimeout(clr)
-    }, 3200)
-    return () => clearInterval(t)
-  }, [reduced])
-
-  const cardBg = isDark ? 'rgba(6,10,24,0.88)' : 'rgba(255,255,255,0.92)'
-
-  return (
-    <div className="p-5 flex flex-col flex-1 min-h-0">
-      {/* Fixed header — never moves */}
-      <div className="flex items-center justify-between mb-3 flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-xl flex items-center justify-center"
-            style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.2)' }}>
-            <Activity style={{ width: 14, height: 14, color: '#22d3ee' }} />
-          </div>
-          <div>
-            <div className="text-sm font-extrabold text-white">Live Activity</div>
-            <div className="text-[10px]" style={{ color: cv(400) }}>Platform-wide events</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-semibold" style={{ color: '#22c55e' }}>
-          <motion.div className="w-1.5 h-1.5 rounded-full bg-green-400"
-            animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.5, repeat: Infinity }} />
-          Live
-        </div>
-      </div>
-
-      {/* Feed viewport — overflow:hidden, no scrollbar */}
-      <div
-        className="flex-1 relative"
-        style={{ overflow: 'hidden' }}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-        {/* Top fade mask */}
-        <div aria-hidden className="absolute top-0 left-0 right-0 h-7 pointer-events-none z-10"
-          style={{ background: `linear-gradient(to bottom,${cardBg},transparent)` }} />
-        {/* Bottom fade mask */}
-        <div aria-hidden className="absolute bottom-0 left-0 right-0 h-7 pointer-events-none z-10"
-          style={{ background: `linear-gradient(to top,${cardBg},transparent)` }} />
-
-        {/* Scrolling track: [items × 2] → animate 0 to -50% = perfect loop */}
-        <div className={reduced ? '' : `lfa-track${paused ? ' lfa-paused' : ''}`}>
-          {FEED_DOUBLED.map((item, i) => {
-            const isHot = !reduced && highlighted === (i % FEED_ITEMS.length)
-            return (
-              <div
-                key={i}
-                className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl mb-1"
-                style={{
-                  background:  isHot ? `${item.color}0e` : 'transparent',
-                  border:      `1px solid ${isHot ? `${item.color}28` : 'transparent'}`,
-                  transition:  'background 0.3s ease, border-color 0.3s ease',
-                }}
-              >
-                <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: `${item.color}15` }}>
-                  <motion.div
-                    animate={isHot ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <item.Icon style={{ width: 11, height: 11, color: item.color }} />
-                  </motion.div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div
-                    className="text-[11px] font-medium truncate"
-                    style={{ color: isHot ? 'white' : cv(300), transition: 'color 0.3s ease' }}
-                  >
-                    {item.text}
-                  </div>
-                </div>
-                <div className="text-[9px] flex-shrink-0" style={{ color: cv(500) }}>
-                  {item.time}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ─── Animated background ──────────────────────────────────────────────────────
 const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   x:    (i * 73 + 17) % 100,
@@ -1004,19 +867,13 @@ function useIsLg() {
 // ─── Bento grid ───────────────────────────────────────────────────────────────
 /*
   12-column layout:
-
   Row 1-2: Analytics (col 1-7, span 2)   | Certificate (col 7-10) | Security (col 10-13)
   Row 2:   Analytics cont.                | OrgMgmt (col 7-10)     | ExamBuilder (col 10-13)
-  Row 3-4: [Left flex column, col 1-5]   | AI Proctoring (col 5-13, span 2)
-             ├─ Voucher   (flex: 0 0 auto)
-             └─ LiveActivity (flex: 1)
-
-  The left column wrapper spans the same rows as AI Proctoring, so LiveActivity
-  automatically fills every pixel of remaining vertical space.
+  Row 3-4: Voucher (col 1-5, span 2)     | AI Proctoring (col 5-13, span 2)
 */
-const ACCENTS = ['#22d3ee','#f59e0b','#22d3ee','#22d3ee','#3b82f6','#8b5cf6','#f43f5e','#22d3ee']
+const ACCENTS = ['#22d3ee','#f59e0b','#22d3ee','#22d3ee','#3b82f6','#8b5cf6','#f43f5e']
 const LABELS  = ['Analytics dashboard','Digital Certificates','Enterprise Security','Organization Management',
-                 'Exam Builder','Voucher System','AI Proctoring','Live Activity Feed']
+                 'Exam Builder','Voucher System','AI Proctoring']
 
 function BentoGrid({ isDark }) {
   const isLg = useIsLg()
@@ -1053,32 +910,10 @@ function BentoGrid({ isDark }) {
           <ExamBuilderDemo isDark={isDark} />
         </FeatureCard>
 
-        {/*
-          Rows 3-4 left: flex column wrapper — same grid span as AI Proctoring.
-          height:100% converts the grid stretch to an explicit definite height so
-          that flex:1 on LiveActivity has something concrete to grow against.
-          Without it, auto-track sizing leaves flex children unsized.
-        */}
-        <div style={{
-          gridColumn:     '1 / 5',
-          gridRow:        '3 / 5',
-          display:        'flex',
-          flexDirection:  'column',
-          gap:            16,
-          height:         '100%',   // ← makes grid-area height definite for flex children
-          minHeight:      0,
-          overflow:       'hidden',
-        }}>
-          {/* Voucher — natural content height, no grow */}
-          <FeatureCard {...fc(5, { flexShrink: 0 })}>
-            <VoucherDemo isDark={isDark} />
-          </FeatureCard>
-
-          {/* LiveActivity — fills ALL remaining space */}
-          <FeatureCard {...fc(7, { flex: 1, minHeight: 0 })}>
-            <LiveActivityDemo isDark={isDark} />
-          </FeatureCard>
-        </div>
+        {/* Row 3-4 left: Voucher spans full height, matches AI Proctoring */}
+        <FeatureCard {...fc(5, { gridColumn: '1 / 5', gridRow: '3 / 5' })}>
+          <VoucherDemo isDark={isDark} />
+        </FeatureCard>
 
         {/* Rows 3-4 right: AI Proctoring */}
         <FeatureCard {...fc(6, { gridColumn: '5 / 13', gridRow: '3 / 5' })}>
@@ -1097,7 +932,6 @@ function BentoGrid({ isDark }) {
     <ExamBuilderDemo isDark={isDark} />,
     <VoucherDemo isDark={isDark} />,
     <AIProctoringDemo isDark={isDark} />,
-    <LiveActivityDemo isDark={isDark} />,
   ]
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
