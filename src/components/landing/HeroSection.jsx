@@ -223,10 +223,10 @@ function HeroBadge({ isDark }) {
       initial={{ opacity:0, y:-14, filter:'blur(6px)' }}
       animate={{ opacity:1, y:0,   filter:'blur(0px)' }}
       transition={{ duration:0.55, ease:EASE }}
-      className="mb-8"
+      className="mb-5"
     >
       <div
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
         style={{ backdropFilter:'blur(12px)', ...s }}
       >
         <Zap className="w-3.5 h-3.5" />
@@ -239,8 +239,9 @@ function HeroBadge({ isDark }) {
 
 // ─── Animated Heading ─────────────────────────────────────────────────────────
 
-const gradStyle = {
-  display:'inline-block',
+// Gradient applied to a plain span so background-clip: text works correctly.
+// The outer motion.span handles entry via stagger variants; inner <span> holds the gradient visual.
+const gradInnerStyle = {
   background:'linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#38bdf8 100%)',
   backgroundSize:'250% 100%',
   WebkitBackgroundClip:'text',
@@ -254,23 +255,31 @@ function AnimatedHeading() {
       variants={headingVar}
       initial="hidden"
       animate="visible"
-      className="text-5xl sm:text-6xl lg:text-[72px] font-extrabold leading-[1.06] tracking-tight mb-6 text-white"
+      className="text-4xl sm:text-5xl lg:text-[50px] font-extrabold leading-[1.1] tracking-tight mb-4 text-white"
     >
       {HEADING_LINES.map((words, li) => (
         <span key={li} className="block">
           {words.map((word, wi) => {
+            // Static space — animated inline-block spaces collapse to zero width
             if (word === ' ')
-              return <motion.span key={wi} variants={charVar} style={{ display:'inline-block' }}>{' '}</motion.span>
+              return <span key={wi} className="inline-block" style={{ width:'0.28em' }} aria-hidden="true" />
 
-            return GRADIENT_WORDS.has(word) ? (
-              <motion.span key={wi} style={gradStyle}
-                animate={{ backgroundPosition:['0% 50%','100% 50%','0% 50%'] }}
-                transition={{ duration:5, repeat:Infinity, ease:'linear', delay:li*0.6 }}>
-                {word.split('').map((ch, ci) => (
-                  <motion.span key={ci} variants={charVar} style={{ display:'inline-block' }}>{ch}</motion.span>
-                ))}
-              </motion.span>
-            ) : (
+            if (GRADIENT_WORDS.has(word)) {
+              // Outer motion.span participates in stagger; inner span owns the gradient
+              return (
+                <motion.span key={wi} variants={charVar} style={{ display:'inline-block' }}>
+                  <motion.span
+                    style={gradInnerStyle}
+                    animate={{ backgroundPosition:['0% 50%','100% 50%','0% 50%'] }}
+                    transition={{ duration:5, repeat:Infinity, ease:'linear', delay:li*0.6 }}
+                  >
+                    {word}
+                  </motion.span>
+                </motion.span>
+              )
+            }
+
+            return (
               <span key={wi} className="inline-block">
                 {word.split('').map((ch, ci) => (
                   <motion.span key={ci} variants={charVar} style={{ display:'inline-block' }}>{ch}</motion.span>
@@ -288,7 +297,7 @@ function AnimatedHeading() {
 
 function HeroDescription() {
   return (
-    <motion.p {...fadeUp(1.1)} className="text-lg text-dark-400 leading-relaxed mb-8 max-w-lg">
+    <motion.p {...fadeUp(1.1)} className="text-base text-dark-400 leading-relaxed mb-5 max-w-lg">
       Create secure online examinations, manage organizations, distribute
       vouchers, monitor candidates in real time, and issue tamper-proof
       certificates — all from one enterprise platform.
@@ -305,7 +314,7 @@ function CTAButtons({ isDark }) {
     : { background:'rgba(0,0,0,0.04)',       border:'1px solid rgba(0,0,0,0.10)'       }
 
   return (
-    <motion.div {...fadeUp(1.3)} className="flex flex-col sm:flex-row gap-3 mb-10">
+    <motion.div {...fadeUp(1.3)} className="flex flex-col sm:flex-row gap-3 mb-6">
       <motion.button
         whileHover={{ y:-2, scale:1.02 }} whileTap={{ scale:0.97 }}
         onClick={() => navigate('/register')}
@@ -398,7 +407,7 @@ function DashboardMockup({ isDark, reduced, px, py }) {
           </div>
 
           {/* Body */}
-          <div className="flex" style={{ height:380 }}>
+          <div className="flex" style={{ height:310 }}>
 
             {/* Sidebar */}
             <div className="flex flex-col py-3 px-2 gap-0.5 shrink-0"
@@ -626,7 +635,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative min-h-screen flex items-center overflow-hidden bg-dark-950"
+      className="relative h-screen flex items-center overflow-hidden bg-dark-950"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -657,8 +666,8 @@ export default function HeroSection() {
       }} />
 
       {/* Main content */}
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-32" style={{ zIndex:10 }}>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-4" style={{ zIndex:10 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
           {/* Left */}
           <div>
