@@ -4,6 +4,7 @@ import TrustedSection from './components/landing/TrustedSection'
 import ProblemSection from './components/landing/ProblemSection'
 import SolutionSection from './components/landing/SolutionSection'
 import InteractiveShowcase from './components/landing/InteractiveShowcase'
+import EnterpriseBentoSection from './components/landing/EnterpriseBentoSection'
 import { Sun, Moon } from 'lucide-react'
 
 function ThemeToggle() {
@@ -35,6 +36,7 @@ export default function App() {
       <ProblemSection />
       <SolutionSection />
       <InteractiveShowcase />
+      <EnterpriseBentoSection />
     </>
   )
 }
