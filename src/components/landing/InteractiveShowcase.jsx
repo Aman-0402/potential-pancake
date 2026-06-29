@@ -1,5 +1,7 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useTheme } from '../../contexts/ThemeContext'
 import {
   Building2, FileText, Tag, Users, Eye, BarChart2,
@@ -8,13 +10,15 @@ import {
   ChevronLeft, ChevronRight, Bell, Copy, Zap,
 } from 'lucide-react'
 
+gsap.registerPlugin(ScrollTrigger)
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 const cv = (n, op = 1) =>
   op < 1 ? `rgb(var(--c-dark-${n}) / ${op})` : `rgb(var(--c-dark-${n}))`
 
 const EASE = [0.25, 0.4, 0.25, 1]
 
-// Shared enter/exit for every dashboard screen — spread into each motion.div
+// Shared screen transition — spread into each dashboard screen's motion.div
 const SC = {
   initial: { opacity: 0, scale: 0.97, filter: 'blur(6px)', y: 10 },
   animate: { opacity: 1, scale: 1,    filter: 'blur(0px)', y: 0,
@@ -23,54 +27,63 @@ const SC = {
     transition: { duration: 0.22, ease: EASE } },
 }
 
-// ─── data ─────────────────────────────────────────────────────────────────────
+// Feature panel variants — one panel, content swaps in place
+const PANEL_V = {
+  initial: { opacity: 0, y: 32,  scale: 0.97, filter: 'blur(10px)' },
+  animate: { opacity: 1, y: 0,   scale: 1,    filter: 'blur(0px)',
+    transition: { duration: 0.55, ease: EASE } },
+  exit:    { opacity: 0, y: -20, scale: 0.98, filter: 'blur(6px)',
+    transition: { duration: 0.3,  ease: EASE } },
+}
+
+// ─── chapter data ─────────────────────────────────────────────────────────────
 const CHAPTERS = [
   {
-    badge: 'Organizations',        Icon: Building2,   color: '#22d3ee', navIdx: 0,
+    badge: 'Organizations',        Icon: Building2,   color: '#22d3ee',
     title: 'Manage Unlimited\nOrganizations',
     desc:  'Create universities, institutes, corporate clients, and departments with complete tenant isolation and role-based access control.',
     bullets: [
-      { Icon: Building2,     text: 'Unlimited tenants with full data isolation'  },
-      { Icon: Users,         text: 'Department hierarchy and role management'     },
-      { Icon: Shield,        text: 'Per-organization security and billing'        },
+      { Icon: Building2,   text: 'Unlimited tenants with full data isolation'  },
+      { Icon: Users,       text: 'Department hierarchy and role management'     },
+      { Icon: Shield,      text: 'Per-organization security and billing'        },
     ],
     cta: 'Explore Organizations →',
   },
   {
-    badge: 'Exam Builder',         Icon: FileText,    color: '#3b82f6', navIdx: 1,
+    badge: 'Exam Builder',         Icon: FileText,    color: '#3b82f6',
     title: 'Build Powerful\nOnline Exams',
     desc:  'Create rich question banks with MCQs and descriptive questions. Set durations, passing scores, and scheduling in minutes.',
     bullets: [
-      { Icon: FileText,      text: 'Rich MCQ and descriptive question builder'   },
-      { Icon: Clock,         text: 'Custom duration, scoring, and scheduling'    },
-      { Icon: Shield,        text: 'Tab detection and session locks built in'    },
+      { Icon: FileText,    text: 'Rich MCQ and descriptive question builder'   },
+      { Icon: Clock,       text: 'Custom duration, scoring, and scheduling'    },
+      { Icon: Shield,      text: 'Tab detection and session locks built in'    },
     ],
     cta: 'Explore Exam Builder →',
   },
   {
-    badge: 'Vouchers',             Icon: Tag,         color: '#8b5cf6', navIdx: 2,
+    badge: 'Vouchers',             Icon: Tag,         color: '#8b5cf6',
     title: 'Instant Voucher\nGeneration',
     desc:  'Generate batch vouchers, assign to candidates instantly, set expiry, and track redemption in real time across all organizations.',
     bullets: [
-      { Icon: Tag,           text: 'Batch generate 1 to 10,000 vouchers'        },
-      { Icon: CheckCircle,   text: 'One-click assignment to candidates'          },
-      { Icon: BarChart2,     text: 'Live redemption tracking and reporting'      },
+      { Icon: Tag,         text: 'Batch generate 1 to 10,000 vouchers'        },
+      { Icon: CheckCircle, text: 'One-click assignment to candidates'          },
+      { Icon: BarChart2,   text: 'Live redemption tracking and reporting'      },
     ],
     cta: 'Explore Vouchers →',
   },
   {
-    badge: 'Candidate Experience', Icon: Users,       color: '#10b981', navIdx: 3,
+    badge: 'Candidate Experience', Icon: Users,       color: '#10b981',
     title: 'Premium Candidate\nExperience',
     desc:  'Candidates get a distraction-free, secure exam environment with real-time progress, countdown timer, and instant result notification.',
     bullets: [
-      { Icon: Users,         text: 'Clean, distraction-free exam interface'      },
-      { Icon: Clock,         text: 'Real-time countdown with auto-submission'    },
-      { Icon: Award,         text: 'Instant results and certificate download'    },
+      { Icon: Users,       text: 'Clean, distraction-free exam interface'      },
+      { Icon: Clock,       text: 'Real-time countdown with auto-submission'    },
+      { Icon: Award,       text: 'Instant results and certificate download'    },
     ],
     cta: 'Explore Candidate Portal →',
   },
   {
-    badge: 'Live Monitoring',      Icon: Eye,         color: '#f43f5e', navIdx: 4,
+    badge: 'Live Monitoring',      Icon: Eye,         color: '#f43f5e',
     title: 'Real-Time Live\nProctoring',
     desc:  'Monitor all active candidates with live session status, fullscreen detection, tab-switch alerts, and automated warning systems.',
     bullets: [
@@ -81,35 +94,35 @@ const CHAPTERS = [
     cta: 'Explore Live Monitoring →',
   },
   {
-    badge: 'Analytics',            Icon: BarChart2,   color: '#f97316', navIdx: 5,
+    badge: 'Analytics',            Icon: BarChart2,   color: '#f97316',
     title: 'Deep Analytics\nand Reporting',
     desc:  'Understand performance trends, department pass rates, and candidate analytics with rich visualizations updated in real time.',
     bullets: [
-      { Icon: BarChart2,     text: 'Pass rates, scores, and attempt trends'      },
-      { Icon: TrendingUp,    text: 'Department and organization benchmarks'      },
-      { Icon: Download,      text: 'Export reports as PDF or CSV instantly'      },
+      { Icon: BarChart2,   text: 'Pass rates, scores, and attempt trends'      },
+      { Icon: TrendingUp,  text: 'Department and organization benchmarks'      },
+      { Icon: Download,    text: 'Export reports as PDF or CSV instantly'      },
     ],
     cta: 'Explore Analytics →',
   },
   {
-    badge: 'Certificates',         Icon: Award,       color: '#f59e0b', navIdx: 6,
+    badge: 'Certificates',         Icon: Award,       color: '#f59e0b',
     title: 'Auto-Issue Digital\nCertificates',
     desc:  'Certificates generate automatically on exam completion. Each includes a unique QR code and tamper-proof public verification URL.',
     bullets: [
-      { Icon: Award,         text: 'Auto-generated on exam completion'           },
-      { Icon: CheckCircle,   text: 'QR-code verified and tamper-proof'          },
-      { Icon: Globe,         text: 'Public verification URL per certificate'     },
+      { Icon: Award,       text: 'Auto-generated on exam completion'           },
+      { Icon: CheckCircle, text: 'QR-code verified and tamper-proof'          },
+      { Icon: Globe,       text: 'Public verification URL per certificate'     },
     ],
     cta: 'Explore Certificates →',
   },
   {
-    badge: 'Public Verification',  Icon: Globe,       color: '#10b981', navIdx: 7,
+    badge: 'Public Verification',  Icon: Globe,       color: '#10b981',
     title: 'Public Certificate\nVerification',
     desc:  'Anyone can verify certificate authenticity instantly via a public URL. No login required. Proof of achievement, worldwide.',
     bullets: [
-      { Icon: Globe,         text: 'Public URL — no login needed'               },
-      { Icon: CheckCircle,   text: 'Instant result in under 200ms'              },
-      { Icon: Shield,        text: 'Tamper detection and audit trail'           },
+      { Icon: Globe,       text: 'Public URL — no login needed'               },
+      { Icon: CheckCircle, text: 'Instant result in under 200ms'              },
+      { Icon: Shield,      text: 'Tamper detection and audit trail'           },
     ],
     cta: 'Explore Verification →',
   },
@@ -127,19 +140,19 @@ const SIDEBAR_NAV = [
 ]
 
 const NOTIFS = [
-  { text: 'Exam Completed',     sub: '94% score achieved',  Icon: CheckCircle,  color: '#10b981' },
-  { text: 'Certificate Issued', sub: 'Ahmed Al-Rashid',     Icon: Award,        color: '#f59e0b' },
-  { text: 'Voucher Generated',  sub: 'Batch of 50 codes',   Icon: Tag,          color: '#8b5cf6' },
-  { text: 'New Organization',   sub: 'TechCorp Inc. added', Icon: Building2,    color: '#22d3ee' },
-  { text: 'Candidate Joined',   sub: 'React Cert Exam',     Icon: Users,        color: '#3b82f6' },
+  { text: 'Exam Completed',     sub: '94% score achieved',  Icon: CheckCircle, color: '#10b981' },
+  { text: 'Certificate Issued', sub: 'Ahmed Al-Rashid',     Icon: Award,       color: '#f59e0b' },
+  { text: 'Voucher Generated',  sub: 'Batch of 50 codes',   Icon: Tag,         color: '#8b5cf6' },
+  { text: 'New Organization',   sub: 'TechCorp Inc. added', Icon: Building2,   color: '#22d3ee' },
+  { text: 'Candidate Joined',   sub: 'React Cert Exam',     Icon: Users,       color: '#3b82f6' },
 ]
 
 // ─── Dashboard Screen 1: Organizations ────────────────────────────────────────
 function OrgScreen() {
   const ORGS = [
-    { name: 'TechCorp Inc.',      dept: '8 departments',  cands: 482,  color: '#22d3ee' },
-    { name: 'UniLearn Academy',   dept: '12 departments', cands: 1203, color: '#3b82f6' },
-    { name: 'SecureFinance Ltd',  dept: '5 departments',  cands: 231,  color: '#8b5cf6' },
+    { name: 'TechCorp Inc.',     dept: '8 departments',  cands: 482,  color: '#22d3ee' },
+    { name: 'UniLearn Academy',  dept: '12 departments', cands: 1203, color: '#3b82f6' },
+    { name: 'SecureFinance Ltd', dept: '5 departments',  cands: 231,  color: '#8b5cf6' },
   ]
   return (
     <motion.div {...SC} className="h-full flex flex-col gap-3 p-4">
@@ -241,13 +254,13 @@ function ExamScreen() {
 
 // ─── Dashboard Screen 3: Vouchers ─────────────────────────────────────────────
 function VoucherScreen() {
-  const CODES   = ['CERT-4X9K-7MQ2', 'CERT-3BN7-LPR8', 'CERT-9WQ1-4TK5',
-                   'CERT-2ZP6-8FH3',  'CERT-7MK4-2QN9',  'CERT-5VL8-3XW1']
-  const STATUS  = ['Active', 'Active', 'Used', 'Active', 'Expired', 'Active']
-  const ST_STYLE = {
-    Active:  { color: '#22c55e',  bg: 'rgba(34,197,94,0.1)'  },
-    Used:    { color: '#94a3b8',  bg: 'rgba(148,163,184,0.1)' },
-    Expired: { color: '#ef4444',  bg: 'rgba(239,68,68,0.1)'  },
+  const CODES  = ['CERT-4X9K-7MQ2', 'CERT-3BN7-LPR8', 'CERT-9WQ1-4TK5',
+                  'CERT-2ZP6-8FH3',  'CERT-7MK4-2QN9',  'CERT-5VL8-3XW1']
+  const STATUS = ['Active', 'Active', 'Used', 'Active', 'Expired', 'Active']
+  const ST = {
+    Active:  { color: '#22c55e', bg: 'rgba(34,197,94,0.1)'   },
+    Used:    { color: '#94a3b8', bg: 'rgba(148,163,184,0.1)' },
+    Expired: { color: '#ef4444', bg: 'rgba(239,68,68,0.1)'   },
   }
   return (
     <motion.div {...SC} className="h-full flex flex-col gap-3 p-4">
@@ -276,7 +289,7 @@ function VoucherScreen() {
       </div>
       <div className="flex-1 grid grid-cols-2 gap-1.5 content-start">
         {CODES.map((code, i) => {
-          const st = ST_STYLE[STATUS[i]]
+          const st = ST[STATUS[i]]
           return (
             <motion.div key={i}
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
@@ -392,8 +405,7 @@ function MonitoringScreen() {
         <div>
           <div className="text-sm font-bold text-white">Live Session</div>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <motion.div className="w-1.5 h-1.5 rounded-full"
-              style={{ background: '#ef4444' }}
+            <motion.div className="w-1.5 h-1.5 rounded-full" style={{ background: '#ef4444' }}
               animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1, repeat: Infinity }} />
             <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.38)' }}>6 active candidates</span>
           </div>
@@ -429,8 +441,7 @@ function MonitoringScreen() {
               </div>
               {c.warn
                 ? <AlertTriangle className="w-3 h-3 flex-shrink-0" style={{ color: '#f43f5e' }} />
-                : <motion.div className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: '#22c55e' }}
+                : <motion.div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#22c55e' }}
                     animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
               }
             </div>
@@ -561,7 +572,7 @@ function CertificateScreen() {
       </motion.div>
       <div className="flex gap-2">
         {[['Download PDF', Download, 'rgba(245,158,11,0.12)', '#f59e0b'],
-          ['Share Link',   Globe,   'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.45)']].map(([l, I, bg, c], i) => (
+          ['Share Link',   Globe,    'rgba(255,255,255,0.06)', 'rgba(255,255,255,0.45)']].map(([l, I, bg, c], i) => (
           <div key={i} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-medium cursor-pointer"
             style={{ background: bg, color: c }}>
             <I className="w-3.5 h-3.5" />{l}
@@ -572,7 +583,7 @@ function CertificateScreen() {
   )
 }
 
-// ─── Dashboard Screen 8: Public Verification ──────────────────────────────────
+// ─── Dashboard Screen 8: Verification ─────────────────────────────────────────
 function VerificationScreen() {
   return (
     <motion.div {...SC} className="h-full flex flex-col gap-4 p-4">
@@ -632,25 +643,24 @@ const SCREENS = [
   MonitoringScreen, AnalyticsScreen, CertificateScreen, VerificationScreen,
 ]
 
-// ─── Sticky Dashboard Shell ────────────────────────────────────────────────────
-function StickyDashboard({ activeChapter, isDark }) {
+// ─── Dashboard shell (never replaced, only internal screen swaps) ──────────────
+function DashboardShell({ activeChapter }) {
   const ch     = CHAPTERS[activeChapter]
   const Screen = SCREENS[activeChapter]
-
   return (
-    <div className="relative w-full h-full flex items-center justify-center px-6 py-8">
-      {/* Color-reactive ambient glow */}
+    <div className="w-full h-full flex items-center justify-center px-4 py-4 relative">
+      {/* Ambient color glow — transitions with chapter */}
       <div className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(ellipse 70% 60% at 30% 50%,${ch.color}0d 0%,transparent 70%)`,
+          background: `radial-gradient(ellipse 70% 60% at 35% 50%,${ch.color}0d,transparent 70%)`,
           transition: 'background 0.6s ease',
         }} />
 
-      <div className="w-full max-w-[480px] relative">
-        {/* Aura under the frame */}
-        <div className="absolute -inset-6 rounded-[44px] blur-2xl pointer-events-none"
+      <div className="w-full relative" style={{ maxWidth: 460 }}>
+        {/* Aura under frame */}
+        <div className="absolute -inset-5 rounded-[40px] blur-2xl pointer-events-none"
           style={{
-            background: `linear-gradient(135deg,${ch.color}14,rgba(139,92,246,0.08))`,
+            background: `linear-gradient(135deg,${ch.color}12,rgba(139,92,246,0.07))`,
             transition: 'background 0.6s ease',
           }} />
 
@@ -659,7 +669,7 @@ function StickyDashboard({ activeChapter, isDark }) {
           style={{
             background: 'rgba(5,9,20,0.97)',
             border: `1px solid ${ch.color}28`,
-            boxShadow: `0 40px 100px rgba(0,0,0,0.6),0 0 60px ${ch.color}0e`,
+            boxShadow: `0 32px 80px rgba(0,0,0,0.55),0 0 50px ${ch.color}0d`,
             transition: 'border-color 0.5s ease, box-shadow 0.5s ease',
           }}>
           {/* Browser chrome */}
@@ -673,7 +683,9 @@ function StickyDashboard({ activeChapter, isDark }) {
             <div className="flex-1 mx-3 flex items-center gap-2 px-3 py-1 rounded-lg text-[10px]"
               style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.25)' }}>
               <div className="w-2 h-2 rounded-full border border-white/20 flex-shrink-0" />
-              <span className="truncate">app.certibyt.com/{ch.badge.toLowerCase().replace(/\s+/g, '-')}</span>
+              <span className="truncate">
+                app.certibyt.com/{ch.badge.toLowerCase().replace(/\s+/g, '-')}
+              </span>
             </div>
             <div className="flex items-center gap-2" style={{ color: 'rgba(255,255,255,0.22)' }}>
               <Bell className="w-3.5 h-3.5" />
@@ -681,9 +693,9 @@ function StickyDashboard({ activeChapter, isDark }) {
             </div>
           </div>
 
-          {/* App body */}
-          <div className="flex" style={{ height: 390 }}>
-            {/* Sidebar */}
+          {/* App body: sidebar + content */}
+          <div className="flex" style={{ height: 380 }}>
+            {/* Sidebar — highlights animate via CSS transition, NO re-mount */}
             <div className="w-36 flex-shrink-0 flex flex-col p-2.5 border-r border-white/[0.05]"
               style={{ background: 'rgba(5,9,20,0.96)' }}>
               <div className="flex items-center gap-1.5 px-2.5 py-2.5 mb-2">
@@ -692,21 +704,23 @@ function StickyDashboard({ activeChapter, isDark }) {
               </div>
               {SIDEBAR_NAV.map((item, i) => (
                 <div key={i}
-                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg mb-0.5 cursor-pointer relative"
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg mb-0.5"
                   style={{
                     background:    i === activeChapter ? `${CHAPTERS[i].color}10` : 'transparent',
                     borderLeft:    `2px solid ${i === activeChapter ? CHAPTERS[i].color : 'transparent'}`,
-                    transition:    'background 0.3s ease, border-color 0.3s ease',
+                    transition:    'background 0.35s ease, border-color 0.35s ease',
                   }}>
                   <item.Icon style={{
                     width: 11, height: 11,
                     color: i === activeChapter ? CHAPTERS[i].color : 'rgba(255,255,255,0.28)',
-                    transition: 'color 0.3s ease',
+                    transition: 'color 0.35s ease',
+                    flexShrink: 0,
                   }} />
-                  <span className="text-[11px] transition-all duration-300"
+                  <span className="text-[11px]"
                     style={{
-                      color: i === activeChapter ? CHAPTERS[i].color : 'rgba(255,255,255,0.3)',
+                      color:      i === activeChapter ? CHAPTERS[i].color : 'rgba(255,255,255,0.3)',
                       fontWeight: i === activeChapter ? 600 : 400,
+                      transition: 'color 0.35s ease, font-weight 0.35s ease',
                     }}>
                     {item.label}
                   </span>
@@ -714,16 +728,16 @@ function StickyDashboard({ activeChapter, isDark }) {
                     <motion.div className="w-1 h-1 rounded-full ml-auto"
                       style={{ background: CHAPTERS[i].color }}
                       initial={{ scale: 0 }} animate={{ scale: 1 }}
-                      key={i} transition={{ duration: 0.2 }} />
+                      key={`dot-${i}`} transition={{ duration: 0.2 }} />
                   )}
                 </div>
               ))}
             </div>
 
-            {/* Main content area — screens swap here */}
+            {/* Main content: only the screen swaps via AnimatePresence */}
             <div className="flex-1 min-w-0 overflow-hidden">
               <AnimatePresence mode="wait">
-                <Screen key={activeChapter} />
+                <Screen key={`screen-${activeChapter}`} />
               </AnimatePresence>
             </div>
           </div>
@@ -756,21 +770,21 @@ function FloatingNotification({ isDark, reduced }) {
   const txt = isDark ? '#f1f5f9'            : '#0f172a'
 
   return (
-    <div className="absolute bottom-10 left-8 z-30 hidden lg:block">
+    <div className="absolute bottom-8 left-6 z-30">
       <AnimatePresence mode="wait">
         {visible && (
           <motion.div key={idx}
             initial={{ opacity: 0, x: -16, scale: 0.88 }}
             animate={{ opacity: 1,  x: 0,   scale: 1    }}
-            exit={{ opacity: 0,    x: 14,   scale: 0.92  }}
+            exit={{    opacity: 0,  x: 14,  scale: 0.92  }}
             transition={{ duration: 0.3 }}
             className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl"
             style={{
-              background:    bg,
-              border:        `1px solid ${n.color}25`,
-              backdropFilter:'blur(20px)',
-              boxShadow:     `0 8px 24px rgba(0,0,0,0.35),0 0 16px ${n.color}14`,
-              whiteSpace:    'nowrap',
+              background:     bg,
+              border:         `1px solid ${n.color}25`,
+              backdropFilter: 'blur(20px)',
+              boxShadow:      `0 8px 24px rgba(0,0,0,0.35),0 0 16px ${n.color}14`,
+              whiteSpace:     'nowrap',
             }}>
             <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
               style={{ background: `${n.color}18`, border: `1px solid ${n.color}28` }}>
@@ -790,16 +804,16 @@ function FloatingNotification({ isDark, reduced }) {
   )
 }
 
-// ─── Progress Timeline ─────────────────────────────────────────────────────────
+// ─── Progress Timeline (fixed inside pinned section) ──────────────────────────
 function ProgressTimeline({ activeChapter }) {
   return (
-    <div className="hidden lg:flex flex-col items-center justify-center gap-0 py-10 flex-shrink-0"
-      style={{ width: 52 }}>
+    <div className="flex flex-col items-center justify-center gap-0 py-6 flex-shrink-0"
+      style={{ width: 48 }}>
       {CHAPTERS.map((ch, i) => (
         <div key={i} className="flex flex-col items-center">
           {i > 0 && (
             <motion.div
-              style={{ width: 1, height: 34 }}
+              style={{ width: 1, height: 30, flexShrink: 0 }}
               animate={{
                 background: i <= activeChapter
                   ? `linear-gradient(to bottom,${CHAPTERS[i - 1].color},${ch.color})`
@@ -809,23 +823,19 @@ function ProgressTimeline({ activeChapter }) {
             />
           )}
           <motion.div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold"
+            className="flex items-center justify-center text-[10px] font-bold"
+            style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid', flexShrink: 0 }}
             animate={{
-              background: i === activeChapter
-                ? `${ch.color}22`
-                : i < activeChapter
-                ? `${ch.color}12`
-                : 'rgba(255,255,255,0.04)',
-              borderColor: i <= activeChapter ? ch.color : 'rgba(255,255,255,0.1)',
-              color: i <= activeChapter ? ch.color : 'rgba(255,255,255,0.22)',
-              boxShadow: i === activeChapter ? `0 0 16px ${ch.color}45` : 'none',
-              scale: i === activeChapter ? 1.14 : 1,
+              background:  i === activeChapter ? `${ch.color}22` : i < activeChapter ? `${ch.color}12` : 'rgba(255,255,255,0.04)',
+              borderColor: i <= activeChapter  ? ch.color          : 'rgba(255,255,255,0.1)',
+              color:       i <= activeChapter  ? ch.color          : 'rgba(255,255,255,0.22)',
+              boxShadow:   i === activeChapter ? `0 0 14px ${ch.color}45` : 'none',
+              scale:       i === activeChapter ? 1.18 : 1,
             }}
             transition={{ duration: 0.35 }}
-            style={{ border: '1px solid' }}
           >
             {i < activeChapter
-              ? <CheckCircle style={{ width: 13, height: 13 }} />
+              ? <CheckCircle style={{ width: 12, height: 12 }} />
               : i + 1
             }
           </motion.div>
@@ -835,80 +845,62 @@ function ProgressTimeline({ activeChapter }) {
   )
 }
 
-// ─── Story Panel (right side, one per chapter) ────────────────────────────────
-function StoryPanel({ chapter, index, onEnter, isDark }) {
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) onEnter(index) },
-      { threshold: 0.45 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [index, onEnter])
-
+// ─── Single animated feature panel (only one mounted at a time) ───────────────
+function FeaturePanel({ chapter }) {
   const { badge, Icon, title, desc, bullets, cta, color } = chapter
-
   return (
-    <div ref={ref} className="min-h-screen flex items-center px-6 lg:px-10 py-20">
+    <motion.div
+      variants={PANEL_V}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="flex flex-col max-w-md"
+    >
+      {/* Badge */}
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-5 self-start"
+        style={{ background: `${color}12`, border: `1px solid ${color}28`, color }}>
+        <Icon className="w-3 h-3" aria-hidden="true" />
+        {badge}
+      </div>
+
+      {/* Heading */}
+      <h3 className="text-3xl lg:text-[36px] font-extrabold text-white leading-[1.1] tracking-tight mb-4">
+        {title.split('\n').map((line, i) => <span key={i} className="block">{line}</span>)}
+      </h3>
+
+      {/* Description */}
+      <p className="text-[15px] leading-relaxed mb-7" style={{ color: cv(400) }}>{desc}</p>
+
+      {/* Bullets */}
+      <div className="flex flex-col gap-3.5 mb-8">
+        {bullets.map((b, i) => (
+          <motion.div key={i}
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.25 + i * 0.1, duration: 0.4, ease: EASE }}
+            className="flex items-start gap-3"
+          >
+            <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+              style={{ background: `${color}12`, border: `1px solid ${color}22` }}>
+              <b.Icon style={{ width: 13, height: 13, color }} />
+            </div>
+            <span className="text-[14px] leading-relaxed" style={{ color: cv(300) }}>{b.text}</span>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* CTA */}
       <motion.div
-        initial={{ opacity: 0, y: 40, filter: 'blur(12px)' }}
-        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: EASE }}
-        className="max-w-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.55, duration: 0.4 }}
+        whileHover={{ x: 6 }}
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold cursor-pointer self-start"
+        style={{ background: `${color}14`, border: `1px solid ${color}30`, color }}
       >
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-5"
-          style={{ background: `${color}12`, border: `1px solid ${color}28`, color }}>
-          <Icon className="w-3 h-3" aria-hidden="true" />
-          {badge}
-        </div>
-
-        {/* Heading */}
-        <h3 className="text-3xl lg:text-[38px] font-extrabold text-white leading-[1.1] tracking-tight mb-4">
-          {title.split('\n').map((line, i) => <span key={i} className="block">{line}</span>)}
-        </h3>
-
-        {/* Desc */}
-        <p className="text-[15px] leading-relaxed mb-7" style={{ color: cv(400) }}>{desc}</p>
-
-        {/* Bullets */}
-        <div className="flex flex-col gap-3.5 mb-8">
-          {bullets.map((b, i) => (
-            <motion.div key={i}
-              initial={{ opacity: 0, x: 18 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.25 + i * 0.1, duration: 0.4, ease: EASE }}
-              className="flex items-start gap-3"
-            >
-              <div className="w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                style={{ background: `${color}12`, border: `1px solid ${color}22` }}>
-                <b.Icon style={{ width: 13, height: 13, color }} />
-              </div>
-              <span className="text-[14px] leading-relaxed" style={{ color: cv(300) }}>{b.text}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.55, duration: 0.4 }}
-          whileHover={{ x: 5 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold cursor-pointer"
-          style={{ background: `${color}14`, border: `1px solid ${color}30`, color }}
-        >
-          {cta}
-        </motion.div>
+        {cta}
       </motion.div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -935,19 +927,59 @@ function AnimBackground({ isDark }) {
   )
 }
 
-// ─── Main Export ──────────────────────────────────────────────────────────────
+// ─── Main export ──────────────────────────────────────────────────────────────
 export default function InteractiveShowcase() {
   const { theme }  = useTheme()
   const isDark     = theme === 'dark'
   const reduced    = useReducedMotion()
-  const [activeChapter, setActiveChapter] = useState(0)
+  const sectionRef = useRef(null)
+  const [currentIdx, setCurrentIdx] = useState(0)
 
-  const handleEnter = useCallback((idx) => setActiveChapter(idx), [])
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    // Only pin on desktop — matchMedia reverts automatically on cleanup
+    const mm = gsap.matchMedia()
+
+    mm.add('(min-width: 1024px)', () => {
+      // Set section to viewport height before pinning
+      section.style.height = '100vh'
+
+      const st = ScrollTrigger.create({
+        trigger: section,
+        start:   'top top',
+        // Each chapter gets one full viewport of scroll distance
+        end:     () => `+=${CHAPTERS.length * window.innerHeight}`,
+        pin:     true,
+        pinSpacing:         true,
+        anticipatePin:      1,
+        invalidateOnRefresh: true,
+        onUpdate(self) {
+          const idx = Math.min(
+            Math.floor(self.progress * CHAPTERS.length),
+            CHAPTERS.length - 1,
+          )
+          // Avoid unnecessary state updates on same index
+          setCurrentIdx(prev => (prev !== idx ? idx : prev))
+        },
+      })
+
+      // Return cleanup for this breakpoint
+      return () => {
+        st.kill()
+        section.style.height = ''
+      }
+    })
+
+    return () => mm.revert()
+  }, [])
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="showcase-heading"
-      className="relative overflow-hidden"
+      className="relative"
       style={{ background: isDark ? cv(950) : 'rgb(248,250,252)' }}
     >
       <AnimBackground isDark={isDark} />
@@ -956,143 +988,165 @@ export default function InteractiveShowcase() {
       <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
         style={{ background: `linear-gradient(to right,transparent,${isDark ? 'rgba(34,211,238,0.2)' : 'rgba(34,211,238,0.14)'},transparent)` }} />
 
-      {/* Section header */}
-      <div className="relative text-center px-4 pt-24 pb-10" style={{ zIndex: 1 }}>
-        <motion.div
-          initial={{ opacity: 0, y: -14, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: EASE }}
-          className="mb-4"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+      {/* ── Desktop: GSAP-pinned 3-column layout ────────────────────────────── */}
+      <div className="hidden lg:flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
+        {/* Compact section header */}
+        <div className="text-center px-4 pt-8 pb-4 flex-shrink-0">
+          <motion.div
+            initial={{ opacity: 0, y: -12, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.45, ease: EASE }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-3"
             style={{
-              background: isDark ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.07)',
-              border: '1px solid rgba(34,211,238,0.22)',
-              color: isDark ? '#67e8f9' : '#0891b2',
+              background:     isDark ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.07)',
+              border:         '1px solid rgba(34,211,238,0.22)',
+              color:          isDark ? '#67e8f9' : '#0891b2',
               backdropFilter: 'blur(14px)',
-            }}>
+            }}
+          >
             <Zap className="w-3.5 h-3.5" aria-hidden="true" />
             Platform Tour
+          </motion.div>
+
+          <motion.h2 id="showcase-heading"
+            initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.12, ease: EASE }}
+            className="text-3xl xl:text-4xl font-extrabold text-white tracking-tight mb-2"
+          >
+            See CertiByt{' '}
+            <span style={{
+              background:          'linear-gradient(135deg,#22d3ee,#a78bfa,#38bdf8)',
+              WebkitBackgroundClip:'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip:      'text',
+            }}>in Action</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.25, ease: EASE }}
+            className="text-sm max-w-lg mx-auto"
+            style={{ color: cv(400) }}
+          >
+            Scroll to explore every capability. The dashboard evolves as you read.
+          </motion.p>
+        </div>
+
+        {/* Three-column body — fills remaining height */}
+        <div className="flex flex-1 min-h-0">
+          {/* Left: Dashboard + floating notification */}
+          <div className="relative flex-shrink-0 h-full" style={{ width: '52%' }}>
+            <DashboardShell activeChapter={currentIdx} />
+            <FloatingNotification isDark={isDark} reduced={!!reduced} />
           </div>
-        </motion.div>
 
-        <motion.h2 id="showcase-heading"
-          initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.15, ease: EASE }}
-          className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4"
-        >
-          See CertiByt{' '}
-          <span style={{
-            background: 'linear-gradient(135deg,#22d3ee,#a78bfa,#38bdf8)',
-            backgroundSize: '200% 100%',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>in Action</span>
-        </motion.h2>
+          {/* Center: Progress timeline */}
+          <ProgressTimeline activeChapter={currentIdx} />
 
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3, ease: EASE }}
-          className="text-base max-w-xl mx-auto" style={{ color: cv(400) }}
-        >
-          Scroll to explore every capability. The dashboard evolves as you read.
-        </motion.p>
-      </div>
-
-      {/* ── Desktop: sticky left + scrolling right ── */}
-      <div className="hidden lg:flex relative" style={{ zIndex: 1 }}>
-        {/* Left — sticky dashboard */}
-        <div className="sticky top-0 flex-shrink-0 relative"
-          style={{ width: '52%', height: '100vh' }}>
-          <StickyDashboard activeChapter={activeChapter} isDark={isDark} />
-          <FloatingNotification isDark={isDark} reduced={!!reduced} />
-        </div>
-
-        {/* Center — progress timeline */}
-        <ProgressTimeline activeChapter={activeChapter} />
-
-        {/* Right — scrolling chapters */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {CHAPTERS.map((ch, i) => (
-            <StoryPanel key={i} chapter={ch} index={i} onEnter={handleEnter} isDark={isDark} />
-          ))}
-          {/* Exit spacer */}
-          <div style={{ height: '10vh' }} />
+          {/* Right: Single feature panel — only one mounted, transitions in place */}
+          <div className="flex-1 flex items-center px-8 xl:px-12 min-w-0">
+            <AnimatePresence mode="wait">
+              <FeaturePanel key={currentIdx} chapter={CHAPTERS[currentIdx]} />
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
-      {/* ── Mobile: stacked ── */}
-      <div className="lg:hidden relative px-4 pb-20" style={{ zIndex: 1 }}>
-        {CHAPTERS.map((ch, i) => {
-          const Screen = SCREENS[i]
-          return (
-            <div key={i} className="mb-16">
-              {/* Mini dashboard preview */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease: EASE }}
-                className="rounded-2xl overflow-hidden mb-6"
-                style={{
-                  background: 'rgba(5,9,20,0.97)',
-                  border: `1px solid ${ch.color}25`,
-                  boxShadow: `0 20px 60px rgba(0,0,0,0.5)`,
-                  height: 300,
-                }}>
-                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.06]"
-                  style={{ background: 'rgba(10,14,30,0.95)' }}>
-                  <div className="flex gap-1">
+      {/* ── Mobile: stacked chapters (no pinning) ──────────────────────────── */}
+      <div className="lg:hidden relative" style={{ zIndex: 1 }}>
+        {/* Mobile header */}
+        <div className="text-center px-4 pt-20 pb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4"
+            style={{
+              background:     isDark ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.07)',
+              border:         '1px solid rgba(34,211,238,0.22)',
+              color:          isDark ? '#67e8f9' : '#0891b2',
+              backdropFilter: 'blur(14px)',
+            }}>
+            <Zap className="w-3.5 h-3.5" /> Platform Tour
+          </div>
+          <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">
+            See CertiByt{' '}
+            <span style={{
+              background:          'linear-gradient(135deg,#22d3ee,#a78bfa)',
+              WebkitBackgroundClip:'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip:      'text',
+            }}>in Action</span>
+          </h2>
+          <p className="text-sm" style={{ color: cv(400) }}>
+            Explore every capability — organization to verification.
+          </p>
+        </div>
+
+        {/* Stacked feature cards */}
+        <div className="px-4 pb-20">
+          {CHAPTERS.map((ch, i) => {
+            const Screen = SCREENS[i]
+            return (
+              <div key={i} className="mb-16">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  className="rounded-2xl overflow-hidden mb-6"
+                  style={{
+                    background: 'rgba(5,9,20,0.97)',
+                    border:     `1px solid ${ch.color}25`,
+                    boxShadow:  '0 20px 60px rgba(0,0,0,0.5)',
+                    height:     280,
+                  }}>
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.06]"
+                    style={{ background: 'rgba(10,14,30,0.95)' }}>
                     {['#ef4444', '#f59e0b', '#22c55e'].map((c, j) => (
                       <div key={j} className="w-2 h-2 rounded-full" style={{ background: c, opacity: 0.8 }} />
                     ))}
+                    <span className="text-[10px] ml-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                      CertiByt · {ch.badge}
+                    </span>
                   </div>
-                  <span className="text-[10px] ml-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                    CertiByt · {ch.badge}
-                  </span>
-                </div>
-                <div style={{ height: 256 }}>
-                  <Screen />
-                </div>
-              </motion.div>
+                  <div style={{ height: 242, overflow: 'hidden' }}>
+                    <Screen />
+                  </div>
+                </motion.div>
 
-              {/* Chapter content */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
-              >
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4"
-                  style={{ background: `${ch.color}12`, border: `1px solid ${ch.color}25`, color: ch.color }}>
-                  <ch.Icon className="w-3 h-3" aria-hidden="true" />
-                  {ch.badge}
-                </div>
-                <h3 className="text-2xl font-extrabold text-white leading-tight mb-3">
-                  {ch.title.split('\n').join(' ')}
-                </h3>
-                <p className="text-sm leading-relaxed mb-5" style={{ color: cv(400) }}>{ch.desc}</p>
-                <div className="flex flex-col gap-3">
-                  {ch.bullets.map((b, j) => (
-                    <div key={j} className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                        style={{ background: `${ch.color}12`, border: `1px solid ${ch.color}22` }}>
-                        <b.Icon style={{ width: 11, height: 11, color: ch.color }} />
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: 0.1, ease: EASE }}
+                >
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-4"
+                    style={{ background: `${ch.color}12`, border: `1px solid ${ch.color}25`, color: ch.color }}>
+                    <ch.Icon className="w-3 h-3" />
+                    {ch.badge}
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white leading-tight mb-3">
+                    {ch.title.split('\n').join(' ')}
+                  </h3>
+                  <p className="text-sm leading-relaxed mb-5" style={{ color: cv(400) }}>{ch.desc}</p>
+                  <div className="flex flex-col gap-3">
+                    {ch.bullets.map((b, j) => (
+                      <div key={j} className="flex items-start gap-3">
+                        <div className="w-6 h-6 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                          style={{ background: `${ch.color}12`, border: `1px solid ${ch.color}22` }}>
+                          <b.Icon style={{ width: 11, height: 11, color: ch.color }} />
+                        </div>
+                        <span className="text-sm leading-relaxed" style={{ color: cv(300) }}>{b.text}</span>
                       </div>
-                      <span className="text-sm leading-relaxed" style={{ color: cv(300) }}>{b.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            </div>
-          )
-        })}
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {/* Bottom divider */}
