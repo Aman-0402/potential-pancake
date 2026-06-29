@@ -70,8 +70,12 @@ function FeatureCard({ children, accent = '#22d3ee', gridStyle = {}, delay = 0, 
       aria-label={label}
       tabIndex={0}
       className="relative rounded-[30px] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-      style={{ background: bg, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-        border, boxShadow: shadow, transition: 'border 0.3s ease, box-shadow 0.3s ease', ...gridStyle }}
+      style={{
+        display: 'flex', flexDirection: 'column',
+        background: bg, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+        border, boxShadow: shadow, transition: 'border 0.3s ease, box-shadow 0.3s ease',
+        ...gridStyle,
+      }}
       variants={CARD_V} custom={delay}
       initial="hidden" whileInView="show"
       viewport={{ once: true, margin: '-40px' }}
@@ -91,7 +95,8 @@ function FeatureCard({ children, accent = '#22d3ee', gridStyle = {}, delay = 0, 
           style={{ background: `radial-gradient(280px circle at ${pos.x}px ${pos.y}px,${accent}12,transparent 65%)` }} />
       )}
 
-      <div className="relative z-20 h-full">
+      {/* flex:1 + min-h-0 so percentage/flex heights inside children resolve correctly */}
+      <div className="relative z-20 flex-1 min-h-0">
         {children}
       </div>
     </motion.article>
@@ -778,7 +783,7 @@ function LiveActivityDemo({ isDark }) {
   const cardBg = isDark ? 'rgba(6,10,24,0.88)' : 'rgba(255,255,255,0.92)'
 
   return (
-    <div className="p-5 flex flex-col" style={{ height: '100%' }}>
+    <div className="p-5 flex flex-col flex-1 min-h-0">
       {/* Fixed header — never moves */}
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
@@ -1050,23 +1055,26 @@ function BentoGrid({ isDark }) {
 
         {/*
           Rows 3-4 left: flex column wrapper — same grid span as AI Proctoring.
-          Voucher is auto-height; LiveActivity stretches to fill all remaining height.
-          min-height:0 on wrapper prevents flex overflow blowout.
+          height:100% converts the grid stretch to an explicit definite height so
+          that flex:1 on LiveActivity has something concrete to grow against.
+          Without it, auto-track sizing leaves flex children unsized.
         */}
         <div style={{
-          gridColumn: '1 / 5',
-          gridRow:    '3 / 5',
+          gridColumn:     '1 / 5',
+          gridRow:        '3 / 5',
           display:        'flex',
           flexDirection:  'column',
           gap:            16,
+          height:         '100%',   // ← makes grid-area height definite for flex children
           minHeight:      0,
+          overflow:       'hidden',
         }}>
-          {/* Voucher — natural height, does not grow */}
+          {/* Voucher — natural content height, no grow */}
           <FeatureCard {...fc(5, { flexShrink: 0 })}>
             <VoucherDemo isDark={isDark} />
           </FeatureCard>
 
-          {/* LiveActivity — consumes ALL remaining vertical space */}
+          {/* LiveActivity — fills ALL remaining space */}
           <FeatureCard {...fc(7, { flex: 1, minHeight: 0 })}>
             <LiveActivityDemo isDark={isDark} />
           </FeatureCard>
