@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Dark mode (default) ──────────────────────────────────────────────────── */
+:root {
+  --c-dark-50:  248 250 252;
+  --c-dark-100: 241 245 249;
+  --c-dark-200: 226 232 240;
+  --c-dark-300: 203 213 225;
+  --c-dark-400: 148 163 184;
+  --c-dark-500: 100 116 139;
+  --c-dark-600:  71  85 105;
+  --c-dark-700:  51  65  85;
+  --c-dark-800:  30  41  59;
+  --c-dark-900:  15  23  42;
+  --c-dark-950:   2   6  23;
+
+  --c-primary-300: 103 232 249;
+  --c-primary-400:  34 211 238;
+  --c-primary-500:   6 182 212;
+  --c-primary-600:   8 145 178;
+  --c-primary-700:  14 116 144;
+}
+
+/* ── Light mode ───────────────────────────────────────────────────────────── */
+html:not(.dark) {
+  --c-dark-50:    2   6  23;
+  --c-dark-100:  15  23  42;
+  --c-dark-200:  30  41  59;
+  --c-dark-300:  51  65  85;
+  --c-dark-400:  71  85 105;
+  --c-dark-500: 100 116 139;
+  --c-dark-600: 148 163 184;
+  --c-dark-700: 203 213 225;
+  --c-dark-800: 226 232 240;
+  --c-dark-900: 241 245 249;
+  --c-dark-950: 248 250 252;
+
+  --c-primary-300:   8 145 178;
+  --c-primary-400:  14 116 144;
+  --c-primary-500:  21  94 117;
+  --c-primary-600:  22  78  99;
+  --c-primary-700:  12  74 110;
+}
+
+@layer base {
+  * { @apply box-border m-0 p-0; }
+  body { @apply bg-dark-950 text-dark-100 font-sans antialiased; }
+
+  /* text-white adapts to near-black in light mode */
+  html:not(.dark) .text-white {
+    --tw-text-opacity: 1;
+    color: rgb(15 23 42 / var(--tw-text-opacity));
+  }
+
+  ::-webkit-scrollbar       { @apply w-1.5; }
+  ::-webkit-scrollbar-track { @apply bg-dark-900; }
+  ::-webkit-scrollbar-thumb { @apply bg-dark-600 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-primary-500; }
+}
