@@ -1,6 +1,7 @@
 import { useTheme } from './contexts/ThemeContext'
 import HeroSection from './components/landing/HeroSection'
 import TrustedSection from './components/landing/TrustedSection'
+import ProblemSection from './components/landing/ProblemSection'
 import { Sun, Moon } from 'lucide-react'
 
 function ThemeToggle() {
@@ -29,6 +30,7 @@ export default function App() {
       <ThemeToggle />
       <HeroSection />
       <TrustedSection />
+      <ProblemSection />
     </>
   )
 }
