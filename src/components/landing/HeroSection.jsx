@@ -57,10 +57,12 @@ const ACTIVITIES = [
 ]
 
 const TRUST_ITEMS = [
-  'Multi-Tenant',
-  'Secure Exams',
-  'AI Proctoring',
-  'Cert Verification',
+  'International Recognition',
+  'Professional Certification',
+  'ISO 9001:2015 QMS',
+  'Corporate Certification',
+  'Secure Digital Verification',
+  'Skill Based Exams',
 ]
 
 const FLOAT_CARDS = [
@@ -70,12 +72,10 @@ const FLOAT_CARDS = [
   { icon: Globe,         label: 'Multi-Tenant Orgs',   cls: 'bottom-1/3 -right-28', delay: 1.8, fy: [4, -4, 4]   },
 ]
 
-const GRADIENT_WORDS = new Set(['Secure', 'Verified', 'Enterprise'])
+const GRADIENT_WORDS = new Set(['GLOBAL', 'CERTIFICATIONS'])
 
 const HEADING_LINES = [
-  ['Conduct', ' ', 'Secure', ' ', 'Online', ' ', 'Exams'],
-  ['Generate', ' ', 'Verified', ' ', 'Certificates'],
-  ['at', ' ', 'Enterprise', ' ', 'Scale'],
+  ['GLOBAL', ' ', 'CERTIFICATIONS'],
 ]
 
 // ─── Motion Variants ──────────────────────────────────────────────────────────
@@ -226,11 +226,11 @@ function HeroBadge({ isDark }) {
       className="mb-5"
     >
       <div
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
+        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase"
         style={{ backdropFilter:'blur(12px)', ...s }}
       >
-        <Zap className="w-3.5 h-3.5" />
-        <span>Enterprise Exam &amp; Certification Platform</span>
+        <Zap className="w-3 h-3" />
+        <span>Empowering Careers With</span>
         <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
       </div>
     </motion.div>
@@ -255,7 +255,7 @@ function AnimatedHeading() {
       variants={headingVar}
       initial="hidden"
       animate="visible"
-      className="text-4xl sm:text-5xl lg:text-[50px] font-extrabold leading-[1.1] tracking-tight mb-4 text-white"
+      className="text-5xl sm:text-6xl lg:text-[72px] font-black leading-[1.05] tracking-tight mb-4 text-white"
     >
       {HEADING_LINES.map((words, li) => (
         <span key={li} className="block">
@@ -298,9 +298,11 @@ function AnimatedHeading() {
 function HeroDescription() {
   return (
     <motion.p {...fadeUp(1.1)} className="text-base text-dark-400 leading-relaxed mb-5 max-w-lg">
-      Create secure online examinations, manage organizations, distribute
-      vouchers, monitor candidates in real time, and issue tamper-proof
-      certificates — all from one enterprise platform.
+      Certibyt is a next-generation certification platform offering secure
+      voucher-based examinations and internationally recognized digital
+      credentials. From individual professionals to enterprises and academic
+      institutions, we help validate skills with trusted, verifiable
+      certifications that meet global industry standards.
     </motion.p>
   )
 }
@@ -309,17 +311,14 @@ function HeroDescription() {
 
 function CTAButtons({ isDark }) {
   const navigate = useNavigate()
-  const secStyle = isDark
-    ? { background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.12)' }
-    : { background:'rgba(0,0,0,0.04)',       border:'1px solid rgba(0,0,0,0.10)'       }
 
   return (
-    <motion.div {...fadeUp(1.3)} className="flex flex-col sm:flex-row gap-3 mb-6">
+    <motion.div {...fadeUp(1.3)} className="flex mb-6">
       <motion.button
         whileHover={{ y:-2, scale:1.02 }} whileTap={{ scale:0.97 }}
         onClick={() => navigate('/register')}
-        aria-label="Start free trial"
-        className="group flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white"
+        aria-label="Get started"
+        className="group flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold text-white"
         style={{
           background:'linear-gradient(135deg,#0891b2 0%,#6d28d9 100%)',
           boxShadow: isDark
@@ -327,18 +326,8 @@ function CTAButtons({ isDark }) {
             : '0 0 20px rgba(6,182,212,0.16),0 4px 14px rgba(0,0,0,0.15)',
         }}
       >
-        Start Free
+        Get Started
         <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-      </motion.button>
-
-      <motion.button
-        whileHover={{ y:-2 }} whileTap={{ scale:0.97 }}
-        onClick={() => navigate('/contact')}
-        aria-label="Book a product demo"
-        className="flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-dark-300 hover:text-dark-100 transition-colors"
-        style={{ backdropFilter:'blur(12px)', ...secStyle }}
-      >
-        Book Demo
       </motion.button>
     </motion.div>
   )
