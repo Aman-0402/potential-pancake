@@ -120,23 +120,6 @@ export default function VerifyHero({ isDark }) {
 
   return (
     <div className="text-center pt-32 pb-16 max-w-4xl mx-auto px-4">
-      {/* Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: -16, filter: 'blur(8px)' }}
-        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.5, ease: EASE }}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-7"
-        style={{
-          background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
-          border:         '1px solid rgba(201,168,76,0.3)',
-          color:          isDark ? '#E4C36E' : '#9E7E28',
-          backdropFilter: 'blur(14px)',
-        }}
-      >
-        <ShieldCheck className="w-3.5 h-3.5" />
-        Public Certificate Verification
-      </motion.div>
-
       {/* Heading */}
       <h1 className="text-5xl lg:text-[64px] font-extrabold tracking-tight leading-[1.06] mb-5">
         <CharReveal

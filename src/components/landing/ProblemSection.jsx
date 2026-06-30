@@ -127,23 +127,6 @@ function SectionHeader({ isDark }) {
 
   return (
     <div className="text-center mb-8 px-4">
-      <motion.div
-        initial={{ opacity:0, y:-14, filter:'blur(6px)' }}
-        whileInView={{ opacity:1, y:0, filter:'blur(0px)' }}
-        viewport={{ once:true }}
-        transition={{ duration:0.5, ease:EASE }}
-        className="mb-4"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium"
-          style={{ backdropFilter:'blur(12px)', ...badge }}>
-          <AlertTriangle className="w-3.5 h-3.5" />
-          <span>Challenges</span>
-          <motion.span className="w-1.5 h-1.5 rounded-full bg-red-400"
-            animate={{ opacity:[1,0.2,1] }} transition={{ duration:1.4, repeat:Infinity }}
-            aria-hidden="true" />
-        </div>
-      </motion.div>
-
       <motion.h2 id="problem-heading"
         variants={headingStagger} initial="hidden" whileInView="visible" viewport={{ once:true }}
         className="text-4xl sm:text-5xl lg:text-[50px] font-extrabold leading-[1.1] tracking-tight mb-3 text-white"

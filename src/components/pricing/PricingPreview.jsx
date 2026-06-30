@@ -209,22 +209,6 @@ export default function PricingPreview({ isDark, inView }) {
     <div className="mb-28">
       {/* Section header */}
       <div className="text-center mb-14">
-        <motion.div
-          initial={{ opacity: 0, y: -14, filter: 'blur(8px)' }}
-          animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-          transition={{ duration: 0.5, ease: EASE }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-5"
-          style={{
-            background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
-            border:         '1px solid rgba(201,168,76,0.3)',
-            color:          isDark ? '#E4C36E' : '#9E7E28',
-            backdropFilter: 'blur(14px)',
-          }}
-        >
-          <Zap className="w-3.5 h-3.5" />
-          Simple, Transparent Pricing
-        </motion.div>
-
         <motion.h2
           initial={{ opacity: 0, y: 18, filter: 'blur(8px)' }}
           animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}

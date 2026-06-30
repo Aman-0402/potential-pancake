@@ -158,20 +158,6 @@ function SectionHeader({ isDark }) {
 
   return (
     <div className="text-center mb-14">
-      {/* Badge */}
-      <motion.div
-        initial={{ opacity:0, y:-14, filter:'blur(6px)' }}
-        whileInView={{ opacity:1, y:0,   filter:'blur(0px)' }}
-        viewport={{ once:true, margin:'-40px' }}
-        transition={{ duration:0.5, ease:EASE }}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-7"
-        style={{ backdropFilter:'blur(12px)', ...badgeStyle }}
-      >
-        <Globe className="w-3.5 h-3.5" />
-        <span>Trusted Worldwide</span>
-        <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" aria-hidden="true" />
-      </motion.div>
-
       {/* Heading */}
       <motion.h2
         variants={headingStagger}

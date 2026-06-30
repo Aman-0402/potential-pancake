@@ -222,21 +222,6 @@ function SolutionHeader({ isDark }) {
 
   return (
     <div className="text-center mb-16">
-      {/* Badge */}
-      <motion.div
-        initial={{ opacity:0, y:-16, filter:'blur(8px)' }}
-        whileInView={{ opacity:1, y:0, filter:'blur(0px)' }}
-        viewport={{ once:true }}
-        transition={{ duration:0.5, ease:EASE }}
-        className="mb-6"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
-          style={{ backdropFilter:'blur(14px)', ...badgeStyle }}>
-          <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-          <span>The Solution</span>
-        </div>
-      </motion.div>
-
       {/* Heading — char-by-char stagger */}
       <motion.h2 id="solution-heading"
         variants={lineStagger} initial="hidden" whileInView="visible" viewport={{ once:true }}

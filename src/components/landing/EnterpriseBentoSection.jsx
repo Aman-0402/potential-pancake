@@ -777,23 +777,6 @@ function SectionHeader({ isDark }) {
 
   return (
     <div ref={ref} className="text-center mb-16 px-4">
-      {/* Badge */}
-      <motion.div
-        initial={{ opacity: 0, y: -14, filter: 'blur(8px)' }}
-        animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-        transition={{ duration: 0.5, ease: EASE }}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6"
-        style={{
-          background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
-          border:         '1px solid rgba(201,168,76,0.3)',
-          color:          isDark ? '#E4C36E' : '#9E7E28',
-          backdropFilter: 'blur(14px)',
-        }}
-      >
-        <Database className="w-3.5 h-3.5" aria-hidden />
-        Enterprise Capabilities
-      </motion.div>
-
       {/* Heading */}
       <h2 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.06] tracking-tight text-white mb-6">
         {/* Character reveal on "Everything" */}

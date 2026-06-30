@@ -971,23 +971,6 @@ export default function InteractiveShowcase() {
       <div className="hidden lg:flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
         {/* Compact section header */}
         <div className="text-center px-4 pt-24 pb-4 flex-shrink-0">
-          <motion.div
-            initial={{ opacity: 0, y: -12, filter: 'blur(6px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.45, ease: EASE }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-3"
-            style={{
-              background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
-              border:         '1px solid rgba(201,168,76,0.3)',
-              color:          isDark ? '#E4C36E' : '#9E7E28',
-              backdropFilter: 'blur(14px)',
-            }}
-          >
-            <Zap className="w-3.5 h-3.5" aria-hidden="true" />
-            Platform Tour
-          </motion.div>
-
           <motion.h2 id="showcase-heading"
             initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -1040,15 +1023,6 @@ export default function InteractiveShowcase() {
       <div className="lg:hidden relative" style={{ zIndex: 1 }}>
         {/* Mobile header */}
         <div className="text-center px-4 pt-20 pb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4"
-            style={{
-              background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
-              border:         '1px solid rgba(201,168,76,0.3)',
-              color:          isDark ? '#E4C36E' : '#9E7E28',
-              backdropFilter: 'blur(14px)',
-            }}>
-            <Zap className="w-3.5 h-3.5" /> Platform Tour
-          </div>
           <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">
             See CertiByt{' '}
             <span style={{
