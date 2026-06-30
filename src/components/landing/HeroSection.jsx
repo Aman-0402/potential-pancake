@@ -126,7 +126,27 @@ function AnimatedCounter({ to, suffix = '', duration = 2000 }) {
   return <>{val.toLocaleString()}{suffix}</>
 }
 
+// ─── SVG Circle Progress ──────────────────────────────────────────────────────
 
+function CircleProgress({ value, size = 28, strokeWidth = 2.5, color, delay = 1.5 }) {
+  const r    = (size - strokeWidth) / 2
+  const circ = 2 * Math.PI * r
+  return (
+    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none"
+        strokeWidth={strokeWidth} stroke={cv(700, 0.2)} />
+      <motion.circle
+        cx={size/2} cy={size/2} r={r}
+        fill="none" strokeWidth={strokeWidth} stroke={color}
+        strokeLinecap="round"
+        strokeDasharray={circ}
+        initial={{ strokeDashoffset: circ }}
+        animate={{ strokeDashoffset: circ - (value / 100) * circ }}
+        transition={{ delay, duration: 1.2, ease: 'easeOut' }}
+      />
+    </svg>
+  )
+}
 
 // ─── Background: Grid ─────────────────────────────────────────────────────────
 
@@ -407,6 +427,21 @@ function DashboardMockup({ isDark, reduced, px, py }) {
                   <span className="text-[9px] font-medium">{label}</span>
                 </div>
               ))}
+              <div className="mt-auto px-2 py-2 flex flex-col gap-1.5">
+                <p className="text-[8px] text-dark-600 mb-0.5">Progress</p>
+                {[
+                  { val:72, color:'#22d3ee', label:'72%', sub:'Exams done',  cls:'text-cyan-500',   delay:2.0 },
+                  { val:89, color:'#a78bfa', label:'89%', sub:'Certs valid', cls:'text-violet-500', delay:2.2 },
+                ].map(p => (
+                  <div key={p.sub} className="flex items-center gap-1.5">
+                    <CircleProgress value={p.val} color={p.color} delay={p.delay} />
+                    <div>
+                      <p className={`text-[9px] font-semibold ${p.cls}`}>{p.label}</p>
+                      <p className="text-[7px] text-dark-600">{p.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Main */}
