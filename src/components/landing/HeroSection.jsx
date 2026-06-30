@@ -33,8 +33,8 @@ const SIDEBAR_NAV = [
 ]
 
 const STAT_CARDS = [
-  { label: 'Candidates',   to: 1247, cls: 'text-cyan-500',    suffix: ''  },
-  { label: 'Active Exams', to: 23,   cls: 'text-violet-500',  suffix: ''  },
+  { label: 'Candidates',   to: 1247, cls: 'text-gold-400',    suffix: ''  },
+  { label: 'Active Exams', to: 23,   cls: 'text-gold-300',    suffix: ''  },
   { label: 'Certs Issued', to: 3891, cls: 'text-emerald-500', suffix: ''  },
   { label: 'Pass Rate',    to: 78,   cls: 'text-amber-500',   suffix: '%' },
 ]
@@ -51,9 +51,9 @@ const CANDIDATES = [
 
 const ACTIVITIES = [
   { dot: 'bg-emerald-400', text: 'Priya M. earned AWS cert',    time: '2m ago'  },
-  { dot: 'bg-cyan-400',    text: 'New org: TechLab India',      time: '8m ago'  },
-  { dot: 'bg-violet-400',  text: 'Exam "DevOps Pro" gone live', time: '15m ago' },
-  { dot: 'bg-amber-400',   text: '127 vouchers distributed',    time: '1h ago'  },
+  { dot: 'bg-gold-400',   text: 'New org: TechLab India',      time: '8m ago'  },
+  { dot: 'bg-gold-300',   text: 'Exam "DevOps Pro" gone live', time: '15m ago' },
+  { dot: 'bg-amber-400',  text: '127 vouchers distributed',    time: '1h ago'  },
 ]
 
 const TRUST_ITEMS = [
@@ -151,7 +151,7 @@ function CircleProgress({ value, size = 28, strokeWidth = 2.5, color, delay = 1.
 // ─── Background: Grid ─────────────────────────────────────────────────────────
 
 function AnimatedGrid({ isDark }) {
-  const c = isDark ? 'rgba(34,211,238,0.04)' : 'rgba(14,165,233,0.06)'
+  const c = isDark ? 'rgba(201,168,76,0.05)' : 'rgba(201,168,76,0.07)'
   return (
     <div
       aria-hidden="true"
@@ -169,9 +169,9 @@ function AnimatedGrid({ isDark }) {
 function GlowOrbs({ isDark, reduced }) {
   const op = isDark ? [0.13, 0.10, 0.08] : [0.06, 0.04, 0.03]
   const orbs = [
-    { w:700, h:700, top:'-15%', left:'-10%',   color:`rgba(6,182,212,${op[0]})`,   x:[0,60,0],  y:[0,30,0],  dur:20, delay:0 },
-    { w:600, h:600, top:'10%',  right:'-10%',   color:`rgba(139,92,246,${op[1]})`, x:[0,-40,0], y:[0,50,0],  dur:25, delay:4 },
-    { w:450, h:450, bottom:'-10%', left:'25%',  color:`rgba(59,130,246,${op[2]})`, x:[0,30,0],  y:[0,-40,0], dur:18, delay:8 },
+    { w:700, h:700, top:'-15%', left:'-10%',   color:`rgba(201,168,76,${op[0]})`,  x:[0,60,0],  y:[0,30,0],  dur:20, delay:0 },
+    { w:600, h:600, top:'10%',  right:'-10%',   color:`rgba(175,144,55,${op[1]})`, x:[0,-40,0], y:[0,50,0],  dur:25, delay:4 },
+    { w:450, h:450, bottom:'-10%', left:'25%',  color:`rgba(232,200,120,${op[2]})`,x:[0,30,0],  y:[0,-40,0], dur:18, delay:8 },
   ]
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -202,7 +202,7 @@ function Particles({ reduced }) {
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
       {pts.map(p => (
         <motion.div key={p.id}
-          className="absolute rounded-full bg-cyan-400"
+          className="absolute rounded-full bg-gold-400"
           style={{ width:p.size, height:p.size, left:p.x, top:p.y, opacity:p.op }}
           animate={{ y:[-12,12,-12], x:[-6,6,-6], opacity:[p.op,p.op*0.2,p.op] }}
           transition={{ duration:p.dur, repeat:Infinity, ease:'easeInOut', delay:p.delay }}
@@ -216,8 +216,8 @@ function Particles({ reduced }) {
 
 function HeroBadge({ isDark }) {
   const s = isDark
-    ? { background:'rgba(34,211,238,0.07)', border:'1px solid rgba(34,211,238,0.22)', color:'#67e8f9' }
-    : { background:'rgba(14,165,233,0.07)', border:'1px solid rgba(14,165,233,0.22)', color:'#0369a1' }
+    ? { background:'rgba(201,168,76,0.1)',  border:'1px solid rgba(201,168,76,0.28)',  color:'#E4C36E' }
+    : { background:'rgba(201,168,76,0.08)', border:'1px solid rgba(201,168,76,0.32)',  color:'#9E7E28' }
   return (
     <motion.div
       initial={{ opacity:0, y:-14, filter:'blur(6px)' }}
@@ -242,7 +242,7 @@ function HeroBadge({ isDark }) {
 // Gradient applied to a plain span so background-clip: text works correctly.
 // The outer motion.span handles entry via stagger variants; inner <span> holds the gradient visual.
 const gradInnerStyle = {
-  background:'linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#38bdf8 100%)',
+  background:'linear-gradient(135deg,#C9A84C 0%,#E4C36E 50%,#AF8E38 100%)',
   backgroundSize:'250% 100%',
   WebkitBackgroundClip:'text',
   WebkitTextFillColor:'transparent',
@@ -320,10 +320,10 @@ function CTAButtons({ isDark }) {
         aria-label="Get started"
         className="group flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-semibold text-white"
         style={{
-          background:'linear-gradient(135deg,#0891b2 0%,#6d28d9 100%)',
+          background:'linear-gradient(135deg,#C9A84C 0%,#AF8E38 100%)',
           boxShadow: isDark
-            ? '0 0 28px rgba(6,182,212,0.28),0 4px 20px rgba(0,0,0,0.45)'
-            : '0 0 20px rgba(6,182,212,0.16),0 4px 14px rgba(0,0,0,0.15)',
+            ? '0 0 28px rgba(201,168,76,0.35),0 4px 20px rgba(0,0,0,0.45)'
+            : '0 0 20px rgba(201,168,76,0.25),0 4px 14px rgba(0,0,0,0.12)',
         }}
       >
         Get Started
@@ -342,7 +342,7 @@ function TrustIndicators() {
       {TRUST_ITEMS.map(label => (
         <motion.div key={label} variants={trustItemVar}
           className="flex items-center gap-1.5 text-xs text-dark-500">
-          <CheckCircle2 className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
+          <CheckCircle2 className="w-3.5 h-3.5 text-primary-400 shrink-0" />
           <span>{label}</span>
         </motion.div>
       ))}
@@ -403,14 +403,14 @@ function DashboardMockup({ isDark, reduced, px, py }) {
               style={{ width:104, ...sidebarStyle }}>
               <div className="px-2 py-2 mb-2">
                 <span className="text-[11px] font-bold tracking-tight">
-                  <span className="text-cyan-500">Certi</span>
+                  <span className="text-gold-400">Certi</span>
                   <span className="text-dark-400">Byt</span>
                 </span>
               </div>
               {SIDEBAR_NAV.map(({ icon:Icon, label, active }) => (
                 <div key={label}
                   className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg ${
-                    active ? 'bg-cyan-500/10 text-cyan-500' : 'text-dark-600'
+                    active ? 'bg-gold-400/10 text-gold-500' : 'text-dark-600'
                   }`}>
                   <Icon className="w-3 h-3 shrink-0" />
                   <span className="text-[9px] font-medium">{label}</span>
@@ -419,8 +419,8 @@ function DashboardMockup({ isDark, reduced, px, py }) {
               <div className="mt-auto px-2 py-2 flex flex-col gap-1.5">
                 <p className="text-[8px] text-dark-600 mb-0.5">Progress</p>
                 {[
-                  { val:72, color:'#22d3ee', label:'72%', sub:'Exams done',  cls:'text-cyan-500',   delay:2.0 },
-                  { val:89, color:'#a78bfa', label:'89%', sub:'Certs valid', cls:'text-violet-500', delay:2.2 },
+                  { val:72, color:'#C9A84C', label:'72%', sub:'Exams done',  cls:'text-gold-400',   delay:2.0 },
+                  { val:89, color:'#E4C36E', label:'89%', sub:'Certs valid', cls:'text-gold-300', delay:2.2 },
                 ].map(p => (
                   <div key={p.sub} className="flex items-center gap-1.5">
                     <CircleProgress value={p.val} color={p.color} delay={p.delay} />
@@ -465,10 +465,10 @@ function DashboardMockup({ isDark, reduced, px, py }) {
                       <motion.div key={i} className="flex-1 rounded-sm min-w-0"
                         style={{
                           background: i === 5
-                            ? 'linear-gradient(to top,#0891b2,#22d3ee)'
+                            ? 'linear-gradient(to top,#AF8E38,#C9A84C)'
                             : isDark
-                              ? 'linear-gradient(to top,rgba(8,145,178,0.35),rgba(34,211,238,0.15))'
-                              : 'linear-gradient(to top,rgba(8,145,178,0.25),rgba(34,211,238,0.10))',
+                              ? 'linear-gradient(to top,rgba(175,142,56,0.35),rgba(201,168,76,0.15))'
+                              : 'linear-gradient(to top,rgba(175,142,56,0.22),rgba(201,168,76,0.10))',
                           transformOrigin:'bottom', height:`${h}%`,
                         }}
                         initial={{ scaleY:0 }} animate={{ scaleY:1 }}
@@ -518,13 +518,13 @@ function DashboardMockup({ isDark, reduced, px, py }) {
                     className="grid grid-cols-4 px-1 py-1 items-center"
                     style={{ borderBottom: i < CANDIDATES.length-1 ? `1px solid ${cv(700,0.08)}` : 'none' }}>
                     <div className="flex items-center gap-1">
-                      <div className="w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold shrink-0 bg-cyan-500/10 text-cyan-500">
+                      <div className="w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold shrink-0 bg-gold-400/10 text-gold-500">
                         {c.name[0]}
                       </div>
                       <span className="text-[8px] text-dark-300 truncate">{c.name}</span>
                     </div>
                     <span className="text-[8px] text-dark-500 truncate pr-1">{c.exam}</span>
-                    <span className="text-[8.5px] font-semibold text-cyan-500">{c.score}%</span>
+                    <span className="text-[8.5px] font-semibold text-gold-500">{c.score}%</span>
                     <span className={`text-[7px] font-semibold px-1.5 py-0.5 rounded-full w-fit ${
                       c.pass ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-500'
                     }`}>
@@ -564,7 +564,7 @@ function FloatingCards({ isDark, reduced }) {
             transition={{ duration:4+delay, repeat:Infinity, ease:'easeInOut' }}
             className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-dark-300"
             style={cardStyle}>
-            <Icon className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
+            <Icon className="w-3.5 h-3.5 text-gold-400 shrink-0" />
             <span>{label}</span>
           </motion.div>
         </motion.div>

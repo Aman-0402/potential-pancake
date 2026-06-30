@@ -4,56 +4,56 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* ── Dark mode (default) ──────────────────────────────────────────────────── */
+/* ── Dark mode (warm dark — default for .dark class) ─────────────────────── */
 :root {
-  --c-dark-50:  248 250 252;
-  --c-dark-100: 241 245 249;
-  --c-dark-200: 226 232 240;
-  --c-dark-300: 203 213 225;
-  --c-dark-400: 148 163 184;
-  --c-dark-500: 100 116 139;
-  --c-dark-600:  71  85 105;
-  --c-dark-700:  51  65  85;
-  --c-dark-800:  30  41  59;
-  --c-dark-900:  15  23  42;
-  --c-dark-950:   2   6  23;
+  --c-dark-50:  248 246 241;
+  --c-dark-100: 232 228 215;
+  --c-dark-200: 210 204 188;
+  --c-dark-300: 185 177 156;
+  --c-dark-400: 148 140 118;
+  --c-dark-500: 110 103  86;
+  --c-dark-600:  78  73  60;
+  --c-dark-700:  52  48  38;
+  --c-dark-800:  34  31  25;
+  --c-dark-900:  22  20  16;
+  --c-dark-950:  13  11   9;
 
-  --c-primary-300: 103 232 249;
-  --c-primary-400:  34 211 238;
-  --c-primary-500:   6 182 212;
-  --c-primary-600:   8 145 178;
-  --c-primary-700:  14 116 144;
+  --c-primary-300: 232 200 120;
+  --c-primary-400: 201 168  76;
+  --c-primary-500: 175 144  55;
+  --c-primary-600: 148 120  40;
+  --c-primary-700: 120  96  28;
 }
 
-/* ── Light mode ───────────────────────────────────────────────────────────── */
+/* ── Light mode (cream + charcoal) ───────────────────────────────────────── */
 html:not(.dark) {
-  --c-dark-50:    2   6  23;
-  --c-dark-100:  15  23  42;
-  --c-dark-200:  30  41  59;
-  --c-dark-300:  51  65  85;
-  --c-dark-400:  71  85 105;
-  --c-dark-500: 100 116 139;
-  --c-dark-600: 148 163 184;
-  --c-dark-700: 203 213 225;
-  --c-dark-800: 226 232 240;
-  --c-dark-900: 241 245 249;
-  --c-dark-950: 248 250 252;
+  --c-dark-50:   12  11   9;
+  --c-dark-100:  28  28  30;
+  --c-dark-200:  42  40  34;
+  --c-dark-300:  61  58  48;
+  --c-dark-400:  90  85  70;
+  --c-dark-500: 130 123 105;
+  --c-dark-600: 168 162 146;
+  --c-dark-700: 200 195 182;
+  --c-dark-800: 222 218 208;
+  --c-dark-900: 238 235 228;
+  --c-dark-950: 248 246 241;
 
-  --c-primary-300:   8 145 178;
-  --c-primary-400:  14 116 144;
-  --c-primary-500:  21  94 117;
-  --c-primary-600:  22  78  99;
-  --c-primary-700:  12  74 110;
+  --c-primary-300: 232 200 120;
+  --c-primary-400: 201 168  76;
+  --c-primary-500: 175 144  55;
+  --c-primary-600: 148 120  40;
+  --c-primary-700: 120  96  28;
 }
 
 @layer base {
   * { @apply box-border m-0 p-0; }
   body { @apply bg-dark-950 text-dark-100 font-sans antialiased; overflow-x: hidden; }
 
-  /* text-white adapts to near-black in light mode */
+  /* text-white adapts: near-white in dark, charcoal #1C1C1E in light */
   html:not(.dark) .text-white {
     --tw-text-opacity: 1;
-    color: rgb(15 23 42 / var(--tw-text-opacity));
+    color: rgb(28 28 30 / var(--tw-text-opacity));
   }
 
   ::-webkit-scrollbar       { @apply w-1.5; }

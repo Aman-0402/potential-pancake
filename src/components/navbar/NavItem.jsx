@@ -61,7 +61,7 @@ export default function NavItem({ label, href, section, isDark, onClick }) {
           className="absolute bottom-0 left-2 right-2 rounded-full"
           style={{
             height: 1.5,
-            background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+            background: 'linear-gradient(90deg, #C9A84C, #E4C36E)',
             scaleX: 0,
             transformOrigin: 'left',
           }}
@@ -78,7 +78,7 @@ export default function NavItem({ label, href, section, isDark, onClick }) {
             className="absolute bottom-0 left-2 right-2 rounded-full"
             style={{
               height: 1.5,
-              background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+              background: 'linear-gradient(90deg, #C9A84C, #E4C36E)',
             }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           />

@@ -52,7 +52,7 @@ export default function FooterCTA({ isDark }) {
         Ready to Build{' '}
         <span
           style={{
-            background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #22d3ee 100%)',
+            background: 'linear-gradient(135deg, #C9A84C 0%, #E4C36E 50%, #AF8E38 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -86,11 +86,11 @@ export default function FooterCTA({ isDark }) {
             to="/register"
             className="relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-[14px] font-bold text-white overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             style={{
-              background: 'linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%)',
-              boxShadow: '0 4px 28px rgba(59,130,246,0.42), inset 0 1px 0 rgba(255,255,255,0.18)',
+              background: 'linear-gradient(135deg, #C9A84C 0%, #AF8E38 100%)',
+              boxShadow: '0 4px 28px rgba(201,168,76,0.40), inset 0 1px 0 rgba(255,255,255,0.18)',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 36px rgba(59,130,246,0.58), inset 0 1px 0 rgba(255,255,255,0.18)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 28px rgba(59,130,246,0.42), inset 0 1px 0 rgba(255,255,255,0.18)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 8px 36px rgba(201,168,76,0.55), inset 0 1px 0 rgba(255,255,255,0.18)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 28px rgba(201,168,76,0.40), inset 0 1px 0 rgba(255,255,255,0.18)' }}
           >
             Start Free
             <motion.span whileHover={{ x: 2 }} transition={{ duration: 0.18 }}>

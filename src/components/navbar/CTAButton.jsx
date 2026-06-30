@@ -14,16 +14,16 @@ export default function CTAButton({ label, to, variant = 'primary', isDark, full
     >
       <Link
         to={to}
-        className={`relative inline-flex items-center justify-center gap-1.5 rounded-full text-[13px] font-semibold tracking-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 overflow-hidden ${
+        className={`relative inline-flex items-center justify-center gap-1.5 rounded-full text-[13px] font-semibold tracking-[0.01em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-1 overflow-hidden ${
           fullWidth ? 'w-full' : ''
         }`}
         style={{
           padding: '7px 16px',
           ...(isPrimary
             ? {
-                background: 'linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%)',
+                background: 'linear-gradient(135deg, #C9A84C 0%, #AF8E38 100%)',
                 color: 'white',
-                boxShadow: '0 2px 16px rgba(59,130,246,0.28), inset 0 1px 0 rgba(255,255,255,0.15)',
+                boxShadow: '0 2px 16px rgba(201,168,76,0.32), inset 0 1px 0 rgba(255,255,255,0.15)',
               }
             : {
                 background: isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)',
