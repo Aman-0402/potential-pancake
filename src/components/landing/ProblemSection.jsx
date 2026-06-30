@@ -104,7 +104,7 @@ const headingStagger = {
 
 // ─── SectionBg ────────────────────────────────────────────────────────────────
 function SectionBg({ isDark }) {
-  const gc = isDark ? 'rgba(239,68,68,0.025)' : 'rgba(239,68,68,0.04)'
+  const gc = isDark ? 'rgba(239,68,68,0.02)' : 'rgba(239,68,68,0.018)'
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
       <div className="absolute inset-0" style={{
@@ -381,7 +381,7 @@ function DesktopSection({ isDark }) {
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none transition-all duration-700"
         style={{
-          background: `radial-gradient(ellipse 80% 60% at 50% 10%,${accentGlow} 0%,transparent 70%)`,
+          background: `radial-gradient(ellipse 80% 55% at 50% 35%,${accentGlow} 0%,transparent 70%)`,
           zIndex: 0,
         }}
       />
@@ -391,7 +391,7 @@ function DesktopSection({ isDark }) {
 
       {/* Divider top */}
       <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
-        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(239,68,68,0.25)':'rgba(239,68,68,0.15)'},transparent)`, zIndex:10 }} />
+        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(239,68,68,0.18)':'rgba(239,68,68,0.06)'},transparent)`, zIndex:10 }} />
 
       {/* Viewport-height content — this is what the user sees while pinned */}
       <div className="relative h-screen flex flex-col" style={{ zIndex: 1 }}>
