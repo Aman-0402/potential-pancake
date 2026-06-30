@@ -61,3 +61,8 @@ html:not(.dark) {
   ::-webkit-scrollbar-thumb { @apply bg-dark-600 rounded-full; }
   ::-webkit-scrollbar-thumb:hover { @apply bg-primary-500; }
 }
+
+@keyframes feedScroll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
