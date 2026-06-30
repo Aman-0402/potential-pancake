@@ -7,7 +7,6 @@ import MobileMenu from './MobileMenu'
 import MobileMenuButton from './MobileMenuButton'
 import ThemeToggle from './ThemeToggle'
 import CTAButton from './CTAButton'
-import ScrollProgress from './ScrollProgress'
 
 const EASE = [0.25, 0.4, 0.25, 1]
 
@@ -72,8 +71,6 @@ export default function Navbar() {
               ].join(', '),
             }}
           >
-            {/* Scroll progress — pinned to top of pill */}
-            <ScrollProgress />
 
             {/* ── Logo ──────────────────────────────────── */}
             <Logo isDark={isDark} />
