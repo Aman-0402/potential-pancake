@@ -939,40 +939,43 @@ export default function InteractiveShowcase() {
     const section = sectionRef.current
     if (!section) return
 
-    // Only pin on desktop — matchMedia reverts automatically on cleanup
     const mm = gsap.matchMedia()
 
     mm.add('(min-width: 1024px)', () => {
-      // Set section to viewport height before pinning
       section.style.height = '100vh'
 
       const st = ScrollTrigger.create({
         trigger: section,
         start:   'top top',
-        // Each chapter gets one full viewport of scroll distance
         end:     () => `+=${CHAPTERS.length * window.innerHeight}`,
         pin:     true,
-        pinSpacing:         true,
-        anticipatePin:      1,
+        pinSpacing:          true,
+        anticipatePin:       1,
         invalidateOnRefresh: true,
         onUpdate(self) {
           const idx = Math.min(
             Math.floor(self.progress * CHAPTERS.length),
             CHAPTERS.length - 1,
           )
-          // Avoid unnecessary state updates on same index
           setCurrentIdx(prev => (prev !== idx ? idx : prev))
         },
       })
 
-      // Return cleanup for this breakpoint
       return () => {
         st.kill()
         section.style.height = ''
       }
     })
 
-    return () => mm.revert()
+    return () => {
+      mm.revert()
+      // Kill any lingering ScrollTriggers and restore body styles GSAP may have set
+      ScrollTrigger.getAll().forEach(t => t.kill())
+      document.body.style.overflow        = ''
+      document.body.style.overflowX       = ''
+      document.documentElement.style.overflow  = ''
+      document.documentElement.style.overflowX = ''
+    }
   }, [])
 
   return (
