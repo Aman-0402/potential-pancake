@@ -5,6 +5,7 @@ import Footer from './components/footer/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
 import Platform from './pages/Platform'
+import Features from './pages/Features'
 
 export default function App() {
   const { theme } = useTheme()
@@ -16,6 +17,7 @@ export default function App() {
         <Routes>
           <Route path="/"         element={<Home />}     />
           <Route path="/platform" element={<Platform />} />
+          <Route path="/features" element={<Features />} />
         </Routes>
       </main>
       <Footer />
