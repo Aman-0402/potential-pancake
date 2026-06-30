@@ -416,6 +416,8 @@ function DesktopSection({ isDark }) {
               {PROBLEMS.map((prob, i) => (
                 <HorizontalCard key={prob.title} problem={prob} isActive={i === activeIdx} isDark={isDark} />
               ))}
+              {/* Ghost card — same dimensions as real card, invisible, keeps scroll feel natural */}
+              <div aria-hidden="true" style={{ width: CARD_W, minWidth: CARD_W, height: 260, flexShrink: 0, visibility: 'hidden' }} />
               {/* Spacer ensures last card centers: scrollWidth includes this, padding-right would not */}
               <div aria-hidden="true" style={{ width: `calc(50vw - ${CARD_W / 2}px)`, flexShrink: 0 }} />
             </div>
