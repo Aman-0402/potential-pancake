@@ -902,7 +902,7 @@ function FeaturePanel({ chapter }) {
 
 // ─── Animated background ──────────────────────────────────────────────────────
 function AnimBackground({ isDark }) {
-  const gc = isDark ? 'rgba(34,211,238,0.016)' : 'rgba(34,211,238,0.028)'
+  const gc = isDark ? 'rgba(201,168,76,0.016)' : 'rgba(201,168,76,0.028)'
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
       <div className="absolute inset-0" style={{
@@ -913,12 +913,12 @@ function AnimBackground({ isDark }) {
         animate={{ x: [0, 50, -25, 0], y: [0, -35, 18, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
         style={{ width: 700, height: 700, top: '-10%', left: '-8%',
-          background: isDark ? 'rgba(34,211,238,0.05)' : 'rgba(34,211,238,0.03)' }} />
+          background: isDark ? 'rgba(201,168,76,0.05)' : 'rgba(201,168,76,0.03)' }} />
       <motion.div className="absolute rounded-full blur-3xl"
         animate={{ x: [0, -40, 20, 0], y: [0, 30, -15, 0] }}
         transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut', delay: 4 }}
         style={{ width: 600, height: 600, bottom: '-12%', right: '-5%',
-          background: isDark ? 'rgba(139,92,246,0.05)' : 'rgba(139,92,246,0.025)' }} />
+          background: isDark ? 'rgba(175,144,55,0.04)' : 'rgba(175,144,55,0.02)' }} />
     </div>
   )
 }
@@ -965,7 +965,7 @@ export default function InteractiveShowcase() {
 
       {/* Top divider */}
       <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
-        style={{ background: `linear-gradient(to right,transparent,${isDark ? 'rgba(34,211,238,0.2)' : 'rgba(34,211,238,0.14)'},transparent)` }} />
+        style={{ background: `linear-gradient(to right,transparent,${isDark ? 'rgba(201,168,76,0.2)' : 'rgba(201,168,76,0.14)'},transparent)` }} />
 
       {/* ── Desktop: GSAP-pinned 3-column layout ────────────────────────────── */}
       <div className="hidden lg:flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
@@ -978,9 +978,9 @@ export default function InteractiveShowcase() {
             transition={{ duration: 0.45, ease: EASE }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium mb-3"
             style={{
-              background:     isDark ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.07)',
-              border:         '1px solid rgba(34,211,238,0.22)',
-              color:          isDark ? '#67e8f9' : '#0891b2',
+              background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
+              border:         '1px solid rgba(201,168,76,0.3)',
+              color:          isDark ? '#E4C36E' : '#9E7E28',
               backdropFilter: 'blur(14px)',
             }}
           >
@@ -997,7 +997,7 @@ export default function InteractiveShowcase() {
           >
             See CertiByt{' '}
             <span style={{
-              background:          'linear-gradient(135deg,#22d3ee,#a78bfa,#38bdf8)',
+              background:          'linear-gradient(135deg,#C9A84C,#E4C36E,#AF8E38)',
               WebkitBackgroundClip:'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip:      'text',
@@ -1042,9 +1042,9 @@ export default function InteractiveShowcase() {
         <div className="text-center px-4 pt-20 pb-10">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-4"
             style={{
-              background:     isDark ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.07)',
-              border:         '1px solid rgba(34,211,238,0.22)',
-              color:          isDark ? '#67e8f9' : '#0891b2',
+              background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
+              border:         '1px solid rgba(201,168,76,0.3)',
+              color:          isDark ? '#E4C36E' : '#9E7E28',
               backdropFilter: 'blur(14px)',
             }}>
             <Zap className="w-3.5 h-3.5" /> Platform Tour
@@ -1052,7 +1052,7 @@ export default function InteractiveShowcase() {
           <h2 className="text-3xl font-extrabold text-white tracking-tight mb-3">
             See CertiByt{' '}
             <span style={{
-              background:          'linear-gradient(135deg,#22d3ee,#a78bfa)',
+              background:          'linear-gradient(135deg,#C9A84C,#E4C36E)',
               WebkitBackgroundClip:'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip:      'text',

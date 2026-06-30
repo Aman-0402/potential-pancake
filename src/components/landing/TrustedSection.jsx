@@ -38,30 +38,34 @@ const STATS = [
   {
     num: 500, suffix: '+', label: 'Organizations',
     sub: 'Active worldwide',
-    Icon: Building2,  colorClass: 'text-cyan-500',
-    glowDark: 'rgba(6,182,212,0.18)',   glowLight: 'rgba(6,182,212,0.09)',
-    borderHoverDark: 'rgba(6,182,212,0.35)', borderHoverLight: 'rgba(6,182,212,0.25)',
+    Icon: Building2,  colorClass: 'text-yellow-500',
+    glowDark: 'rgba(201,168,76,0.18)',   glowLight: 'rgba(201,168,76,0.09)',
+    borderHoverDark: 'rgba(201,168,76,0.35)', borderHoverLight: 'rgba(201,168,76,0.25)',
+    hex: '#C9A84C',
   },
   {
     num: 250, suffix: 'K+', label: 'Certificates Issued',
     sub: 'Tamper-proof & verifiable',
-    Icon: Award, colorClass: 'text-violet-500',
-    glowDark: 'rgba(139,92,246,0.18)',  glowLight: 'rgba(139,92,246,0.09)',
-    borderHoverDark: 'rgba(139,92,246,0.35)', borderHoverLight: 'rgba(139,92,246,0.25)',
+    Icon: Award, colorClass: 'text-amber-400',
+    glowDark: 'rgba(228,195,110,0.18)',  glowLight: 'rgba(228,195,110,0.09)',
+    borderHoverDark: 'rgba(228,195,110,0.35)', borderHoverLight: 'rgba(228,195,110,0.25)',
+    hex: '#E4C36E',
   },
   {
     num: 1, suffix: 'M+', label: 'Candidates',
     sub: 'Exams taken globally',
-    Icon: Users,  colorClass: 'text-emerald-500',
-    glowDark: 'rgba(16,185,129,0.18)',  glowLight: 'rgba(16,185,129,0.09)',
-    borderHoverDark: 'rgba(16,185,129,0.35)', borderHoverLight: 'rgba(16,185,129,0.25)',
+    Icon: Users,  colorClass: 'text-yellow-600',
+    glowDark: 'rgba(175,144,55,0.18)',  glowLight: 'rgba(175,144,55,0.09)',
+    borderHoverDark: 'rgba(175,144,55,0.35)', borderHoverLight: 'rgba(175,144,55,0.25)',
+    hex: '#AF8E38',
   },
   {
     num: 99.9, suffix: '%', label: 'Platform Uptime',
     sub: 'SLA guaranteed',
     Icon: Shield, colorClass: 'text-amber-500',
-    glowDark: 'rgba(245,158,11,0.18)',  glowLight: 'rgba(245,158,11,0.09)',
-    borderHoverDark: 'rgba(245,158,11,0.35)', borderHoverLight: 'rgba(245,158,11,0.25)',
+    glowDark: 'rgba(212,170,90,0.18)',  glowLight: 'rgba(212,170,90,0.09)',
+    borderHoverDark: 'rgba(212,170,90,0.35)', borderHoverLight: 'rgba(212,170,90,0.25)',
+    hex: '#D4AA5A',
   },
 ]
 
@@ -93,7 +97,7 @@ const fadeUpOnce = (delay = 0) => ({
 })
 
 const gradInnerStyle = {
-  background:         'linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#38bdf8 100%)',
+  background:         'linear-gradient(135deg,#C9A84C 0%,#E4C36E 50%,#AF8E38 100%)',
   backgroundSize:     '250% 100%',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
@@ -102,11 +106,11 @@ const gradInnerStyle = {
 
 // ─── FloatingBackground ───────────────────────────────────────────────────────
 function FloatingBackground({ isDark, reduced }) {
-  const gridColor = isDark ? 'rgba(34,211,238,0.035)' : 'rgba(14,165,233,0.05)'
+  const gridColor = isDark ? 'rgba(201,168,76,0.028)' : 'rgba(201,168,76,0.038)'
   const orbs = [
-    { w:700, h:700, top:'5%',   left:'55%',  color: isDark?'rgba(6,182,212,0.07)':'rgba(6,182,212,0.035)',   x:[0,50,0],  y:[0,30,0],  dur:22 },
-    { w:500, h:500, top:'40%',  left:'-5%',  color: isDark?'rgba(139,92,246,0.07)':'rgba(139,92,246,0.035)', x:[0,-35,0], y:[0,40,0],  dur:28 },
-    { w:400, h:400, top:'65%',  left:'70%',  color: isDark?'rgba(59,130,246,0.06)':'rgba(59,130,246,0.03)',  x:[0,25,0],  y:[0,-30,0], dur:19 },
+    { w:700, h:700, top:'5%',   left:'55%',  color: isDark?'rgba(201,168,76,0.07)':'rgba(201,168,76,0.04)',  x:[0,50,0],  y:[0,30,0],  dur:22 },
+    { w:500, h:500, top:'40%',  left:'-5%',  color: isDark?'rgba(175,144,55,0.06)':'rgba(175,144,55,0.03)',  x:[0,-35,0], y:[0,40,0],  dur:28 },
+    { w:400, h:400, top:'65%',  left:'70%',  color: isDark?'rgba(228,195,110,0.05)':'rgba(228,195,110,0.03)', x:[0,25,0],  y:[0,-30,0], dur:19 },
   ]
   const particles = Array.from({ length: 16 }, (_, i) => ({
     id: i, left:`${(i*19+7)%95}%`, top:`${(i*13+11)%90}%`,
@@ -131,7 +135,7 @@ function FloatingBackground({ isDark, reduced }) {
       ))}
       {/* Particles */}
       {!reduced && particles.map(p => (
-        <motion.div key={p.id} className="absolute rounded-full bg-cyan-400"
+        <motion.div key={p.id} className="absolute rounded-full" style={{ background: '#C9A84C' }}
           style={{ width:p.size, height:p.size, left:p.left, top:p.top, opacity:p.op }}
           animate={{ y:[-10,10,-10], opacity:[p.op, p.op*0.2, p.op] }}
           transition={{ duration:p.dur, repeat:Infinity, ease:'easeInOut', delay:p.delay }}
@@ -149,8 +153,8 @@ function FloatingBackground({ isDark, reduced }) {
 // ─── SectionHeader ────────────────────────────────────────────────────────────
 function SectionHeader({ isDark }) {
   const badgeStyle = isDark
-    ? { background:'rgba(34,211,238,0.07)', border:'1px solid rgba(34,211,238,0.2)', color:'#67e8f9' }
-    : { background:'rgba(14,165,233,0.07)', border:'1px solid rgba(14,165,233,0.2)', color:'#0369a1' }
+    ? { background:'rgba(201,168,76,0.1)', border:'1px solid rgba(201,168,76,0.3)', color:'#E4C36E' }
+    : { background:'rgba(201,168,76,0.08)', border:'1px solid rgba(201,168,76,0.28)', color:'#9E7E28' }
 
   return (
     <div className="text-center mb-14">
@@ -400,7 +404,7 @@ function StatisticsGrid({ isDark }) {
       <div aria-hidden="true" className="absolute -inset-12 pointer-events-none"
         style={{
           background:`radial-gradient(ellipse 70% 60% at 50% 50%,${
-            isDark ? 'rgba(6,182,212,0.06)' : 'rgba(6,182,212,0.03)'
+            isDark ? 'rgba(201,168,76,0.06)' : 'rgba(201,168,76,0.03)'
           } 0%,transparent 70%)`,
         }} />
 
@@ -429,7 +433,7 @@ export default function TrustedSection() {
       {/* Top divider glow */}
       <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
         style={{ background:`linear-gradient(to right,transparent,${
-          isDark ? 'rgba(34,211,238,0.3)' : 'rgba(14,165,233,0.2)'
+          isDark ? 'rgba(201,168,76,0.3)' : 'rgba(201,168,76,0.2)'
         },transparent)` }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 sm:py-20 lg:py-28" style={{ zIndex:10 }}>
@@ -441,7 +445,7 @@ export default function TrustedSection() {
       {/* Bottom divider glow */}
       <div aria-hidden="true" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
         style={{ background:`linear-gradient(to right,transparent,${
-          isDark ? 'rgba(34,211,238,0.2)' : 'rgba(14,165,233,0.12)'
+          isDark ? 'rgba(201,168,76,0.2)' : 'rgba(201,168,76,0.12)'
         },transparent)` }} />
     </section>
   )

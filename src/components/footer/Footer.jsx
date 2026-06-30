@@ -15,7 +15,7 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
   dur:   12 + ((i * 19) % 18),
   dy:    -18 - ((i * 9) % 22),
   dx:    (((i * 13) % 24) - 12),
-  color: ['#3b82f6', '#8b5cf6', '#22d3ee'][i % 3],
+  color: ['#C9A84C', '#E4C36E', '#AF8E38'][i % 3],
   op:    0.12 + ((i * 11) % 14) / 100,
 }))
 
@@ -28,7 +28,7 @@ export default function Footer() {
   const ref       = useRef(null)
   const inView    = useInView(ref, { once: true, margin: '0px 0px -80px 0px' })
 
-  const gridColor = isDark ? 'rgba(59,130,246,0.022)' : 'rgba(59,130,246,0.03)'
+  const gridColor = isDark ? 'rgba(201,168,76,0.022)' : 'rgba(201,168,76,0.03)'
   const bgBase    = isDark ? 'rgb(4,6,18)' : 'rgb(248,250,252)'
 
   return (
@@ -56,8 +56,8 @@ export default function Footer() {
             width: 900, height: 900,
             top: '-15%', left: '-10%',
             background: isDark
-              ? 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(59,130,246,0.02) 40%, transparent 70%)'
-              : 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 60%)',
+              ? 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, rgba(201,168,76,0.02) 40%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(201,168,76,0.05) 0%, transparent 60%)',
             filter: 'blur(1px)',
           }}
           animate={reduced ? {} : {
@@ -75,8 +75,8 @@ export default function Footer() {
             width: 700, height: 700,
             bottom: '-10%', right: '-5%',
             background: isDark
-              ? 'radial-gradient(circle, rgba(139,92,246,0.07) 0%, rgba(139,92,246,0.02) 40%, transparent 70%)'
-              : 'radial-gradient(circle, rgba(139,92,246,0.04) 0%, transparent 60%)',
+              ? 'radial-gradient(circle, rgba(175,144,55,0.06) 0%, rgba(175,144,55,0.02) 40%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(175,144,55,0.04) 0%, transparent 60%)',
             filter: 'blur(1px)',
           }}
           animate={reduced ? {} : {
@@ -94,8 +94,8 @@ export default function Footer() {
             width: 500, height: 500,
             top: '5%', right: '10%',
             background: isDark
-              ? 'radial-gradient(circle, rgba(34,211,238,0.04) 0%, transparent 65%)'
-              : 'radial-gradient(circle, rgba(34,211,238,0.03) 0%, transparent 65%)',
+              ? 'radial-gradient(circle, rgba(228,195,110,0.04) 0%, transparent 65%)'
+              : 'radial-gradient(circle, rgba(228,195,110,0.03) 0%, transparent 65%)',
           }}
           animate={reduced ? {} : {
             x: [0, 20, -10, 0],

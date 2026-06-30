@@ -42,8 +42,8 @@ function FloatingIllustration({ isDark }) {
           background: isDark
             ? 'linear-gradient(135deg,rgba(12,16,34,0.98),rgba(6,10,24,0.99))'
             : 'linear-gradient(135deg,rgba(255,255,255,0.98),rgba(248,250,252,0.99))',
-          border: '1px solid rgba(59,130,246,0.2)',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 0 40px rgba(59,130,246,0.12)',
+          border: '1px solid rgba(201,168,76,0.25)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.35), 0 0 40px rgba(201,168,76,0.1)',
           backdropFilter: 'blur(16px)',
           padding: 16,
         }}
@@ -55,7 +55,7 @@ function FloatingIllustration({ isDark }) {
         </div>
         <div className="text-[9px] font-medium mb-1" style={{ color: 'rgba(148,163,184,0.6)' }}>Certificate of Completion</div>
         <div className="text-[13px] font-extrabold mb-0.5" style={{ color: isDark ? '#f1f5f9' : '#0f172a' }}>Ahmed Al-Rashid</div>
-        <div className="text-[10px]" style={{ color: '#3b82f6' }}>AWS Cloud Practitioner</div>
+        <div className="text-[10px]" style={{ color: '#C9A84C' }}>AWS Cloud Practitioner</div>
         <div className="flex items-end justify-between mt-2">
           <div className="text-[8px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Jan 15, 2026 · CBT-2026-8F92D4A1</div>
           {/* Mini QR */}
@@ -109,9 +109,9 @@ function FloatingIllustration({ isDark }) {
 }
 
 const STATS = [
-  { value: '500K+',  label: 'Certs Verified', color: '#3b82f6'  },
-  { value: '500+',   label: 'Organizations',   color: '#10b981'  },
-  { value: '99.9%',  label: 'Uptime SLA',      color: '#8b5cf6'  },
+  { value: '500K+',  label: 'Certs Verified', color: '#C9A84C'  },
+  { value: '500+',   label: 'Organizations',   color: '#E4C36E'  },
+  { value: '99.9%',  label: 'Uptime SLA',      color: '#AF8E38'  },
 ]
 
 export default function VerifyHero({ isDark }) {
@@ -127,9 +127,9 @@ export default function VerifyHero({ isDark }) {
         transition={{ duration: 0.5, ease: EASE }}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-7"
         style={{
-          background:     isDark ? 'rgba(16,185,129,0.1)' : 'rgba(16,185,129,0.08)',
-          border:         '1px solid rgba(16,185,129,0.28)',
-          color:          isDark ? '#34d399' : '#059669',
+          background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
+          border:         '1px solid rgba(201,168,76,0.3)',
+          color:          isDark ? '#E4C36E' : '#9E7E28',
           backdropFilter: 'blur(14px)',
         }}
       >
@@ -148,7 +148,7 @@ export default function VerifyHero({ isDark }) {
           <CharReveal
             text="CertiByt "
             style={{
-              background: 'linear-gradient(135deg,#3b82f6,#22d3ee)',
+              background: 'linear-gradient(135deg,#C9A84C,#E4C36E)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -158,7 +158,7 @@ export default function VerifyHero({ isDark }) {
           <CharReveal
             text="Certificate"
             style={{
-              background: 'linear-gradient(135deg,#8b5cf6,#a78bfa)',
+              background: 'linear-gradient(135deg,#AF8E38,#C9A84C)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',

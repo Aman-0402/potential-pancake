@@ -12,8 +12,8 @@ const PLANS = [
     desc:  'Perfect for small institutes getting started with online examinations.',
     price: '$49',
     per:   '/month',
-    color: '#22d3ee',
-    grad:  'linear-gradient(135deg,#22d3ee,#3b82f6)',
+    color: '#AF8E38',
+    grad:  'linear-gradient(135deg,#AF8E38,#C9A84C)',
     featured: false,
     features: [
       'Up to 5 organizations',
@@ -30,8 +30,8 @@ const PLANS = [
     desc:  'For growing platforms that need advanced proctoring and analytics.',
     price: '$149',
     per:   '/month',
-    color: '#3b82f6',
-    grad:  'linear-gradient(135deg,#3b82f6,#8b5cf6)',
+    color: '#C9A84C',
+    grad:  'linear-gradient(135deg,#C9A84C,#E4C36E)',
     featured: true,
     features: [
       'Up to 25 organizations',
@@ -49,8 +49,8 @@ const PLANS = [
     desc:  'Unlimited scale for universities and large enterprise deployments.',
     price: 'Custom',
     per:   '',
-    color: '#8b5cf6',
-    grad:  'linear-gradient(135deg,#8b5cf6,#a78bfa)',
+    color: '#9E7E28',
+    grad:  'linear-gradient(135deg,#9E7E28,#AF8E38)',
     featured: false,
     features: [
       'Unlimited organizations',
@@ -215,9 +215,9 @@ export default function PricingPreview({ isDark, inView }) {
           transition={{ duration: 0.5, ease: EASE }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-5"
           style={{
-            background:     isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.08)',
-            border:         '1px solid rgba(59,130,246,0.25)',
-            color:          isDark ? '#60a5fa' : '#2563eb',
+            background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
+            border:         '1px solid rgba(201,168,76,0.3)',
+            color:          isDark ? '#E4C36E' : '#9E7E28',
             backdropFilter: 'blur(14px)',
           }}
         >
@@ -234,7 +234,7 @@ export default function PricingPreview({ isDark, inView }) {
         >
           Choose Your{' '}
           <span style={{
-            background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)',
+            background: 'linear-gradient(135deg,#C9A84C,#E4C36E)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -273,7 +273,7 @@ export default function PricingPreview({ isDark, inView }) {
           <motion.span
             whileHover={{ x: 4 }}
             className="inline-flex items-center gap-1.5 text-sm font-semibold"
-            style={{ color: isDark ? '#60a5fa' : '#2563eb' }}
+            style={{ color: isDark ? '#E4C36E' : '#9E7E28' }}
           >
             See full pricing details
             <ArrowRight className="w-4 h-4" />

@@ -69,7 +69,7 @@ function FeatureCard({ children, accent = '#22d3ee', gridStyle = {}, delay = 0, 
       ref={ref}
       aria-label={label}
       tabIndex={0}
-      className="relative rounded-[30px] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+      className="relative rounded-[30px] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500"
       style={{
         display: 'flex', flexDirection: 'column',
         background: bg, backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
@@ -731,11 +731,11 @@ const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   dur:  8 + ((i * 19) % 12),
   dy:   -12 - ((i * 7) % 16),
   dx:   (((i * 13) % 20) - 10),
-  color: ['#22d3ee', '#8b5cf6', '#3b82f6'][i % 3],
+  color: ['#C9A84C', '#E4C36E', '#AF8E38'][i % 3],
 }))
 
 function AnimBackground({ isDark }) {
-  const gc = isDark ? 'rgba(34,211,238,0.015)' : 'rgba(34,211,238,0.025)'
+  const gc = isDark ? 'rgba(201,168,76,0.015)' : 'rgba(201,168,76,0.025)'
   return (
     <div aria-hidden className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Grid */}
@@ -748,12 +748,12 @@ function AnimBackground({ isDark }) {
         animate={{ x: [0, 40, -20, 0], y: [0, -30, 15, 0] }}
         transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
         style={{ width: 600, height: 600, top: '-5%', left: '-5%',
-          background: isDark ? 'rgba(34,211,238,0.04)' : 'rgba(34,211,238,0.025)' }} />
+          background: isDark ? 'rgba(201,168,76,0.04)' : 'rgba(201,168,76,0.025)' }} />
       <motion.div className="absolute rounded-full blur-3xl"
         animate={{ x: [0, -35, 18, 0], y: [0, 25, -12, 0] }}
         transition={{ duration: 30, repeat: Infinity, ease: 'easeInOut', delay: 5 }}
         style={{ width: 500, height: 500, bottom: '-5%', right: '-5%',
-          background: isDark ? 'rgba(139,92,246,0.04)' : 'rgba(139,92,246,0.025)' }} />
+          background: isDark ? 'rgba(175,144,55,0.035)' : 'rgba(175,144,55,0.02)' }} />
       {/* Particles */}
       {PARTICLES.map((p, i) => (
         <motion.div key={i}
@@ -784,9 +784,9 @@ function SectionHeader({ isDark }) {
         transition={{ duration: 0.5, ease: EASE }}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6"
         style={{
-          background:     isDark ? 'rgba(34,211,238,0.08)' : 'rgba(34,211,238,0.07)',
-          border:         '1px solid rgba(34,211,238,0.22)',
-          color:          isDark ? '#67e8f9' : '#0891b2',
+          background:     isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.08)',
+          border:         '1px solid rgba(201,168,76,0.3)',
+          color:          isDark ? '#E4C36E' : '#9E7E28',
           backdropFilter: 'blur(14px)',
         }}
       >
@@ -802,7 +802,7 @@ function SectionHeader({ isDark }) {
             <motion.span key={i}
               style={{
                 display: 'inline-block',
-                background: 'linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#38bdf8 100%)',
+                background: 'linear-gradient(135deg,#C9A84C 0%,#E4C36E 50%,#AF8E38 100%)',
                 backgroundSize: '200% 100%',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -959,7 +959,7 @@ export default function EnterpriseBentoSection() {
 
       {/* Top divider */}
       <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px"
-        style={{ background: `linear-gradient(to right,transparent,${isDark ? 'rgba(34,211,238,0.2)' : 'rgba(34,211,238,0.14)'},transparent)` }} />
+        style={{ background: `linear-gradient(to right,transparent,${isDark ? 'rgba(201,168,76,0.2)' : 'rgba(201,168,76,0.14)'},transparent)` }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ zIndex: 1 }}>
         <SectionHeader isDark={isDark} />
@@ -969,7 +969,7 @@ export default function EnterpriseBentoSection() {
       {/* Bottom divider */}
       <div aria-hidden className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2/3 h-px"
         style={{ background: `light-dark(rgba(34,211,238,0.1),rgba(34,211,238,0.18))`,
-          background: `linear-gradient(to right,transparent,${isDark ? 'rgba(34,211,238,0.18)' : 'rgba(34,211,238,0.1)'},transparent)` }} />
+          background: `linear-gradient(to right,transparent,${isDark ? 'rgba(201,168,76,0.18)' : 'rgba(201,168,76,0.1)'},transparent)` }} />
     </section>
   )
 }

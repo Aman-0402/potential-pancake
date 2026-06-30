@@ -15,7 +15,7 @@ const cv = (n, op = 1) =>
 const EASE = [0.25, 0.4, 0.25, 1]
 
 const solGradStyle = {
-  background: 'linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#38bdf8 100%)',
+  background: 'linear-gradient(135deg,#C9A84C 0%,#E4C36E 50%,#AF8E38 100%)',
   backgroundSize: '250% 100%',
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
@@ -100,7 +100,7 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
   w:    ((i * 1.7 + 1.3) % 2.5) + 1,
   left: (i * 19 + 7)  % 100,
   top:  (i * 31 + 13) % 100,
-  color: ['#22d3ee','#a78bfa','#3b82f6','#10b981'][i % 4],
+  color: ['#C9A84C','#E4C36E','#AF8E38','#D4AA5A'][i % 4],
   dur:  3.5 + (i % 5) * 0.9,
   dly:  (i * 0.35) % 3.5,
   amp:  6 + (i % 3) * 5,
@@ -163,7 +163,7 @@ function AnimCounter({ to, duration = 1.6, suffix = '' }) {
 
 // ─── AnimBackground ───────────────────────────────────────────────────────────
 function AnimBackground({ isDark, reduced }) {
-  const gc = isDark ? 'rgba(34,211,238,0.018)' : 'rgba(34,211,238,0.03)'
+  const gc = isDark ? 'rgba(201,168,76,0.018)' : 'rgba(201,168,76,0.03)'
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Grid */}
@@ -174,30 +174,30 @@ function AnimBackground({ isDark, reduced }) {
 
       {/* Spotlight behind heading */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-96 blur-3xl"
-        style={{ background: isDark ? 'rgba(34,211,238,0.045)' : 'rgba(34,211,238,0.03)' }} />
+        style={{ background: isDark ? 'rgba(201,168,76,0.04)' : 'rgba(201,168,76,0.025)' }} />
 
       {!reduced && (
         <>
-          {/* Orb 1 — cyan, top-left */}
+          {/* Orb 1 — gold, top-left */}
           <motion.div className="absolute rounded-full blur-3xl"
             animate={{ x:[0,60,-30,0], y:[0,-40,20,0], scale:[1,1.12,0.94,1] }}
             transition={{ duration:20, repeat:Infinity, ease:'easeInOut' }}
             style={{ width:700, height:700, top:'-15%', left:'-5%',
-              background: isDark?'rgba(34,211,238,0.055)':'rgba(34,211,238,0.03)' }} />
+              background: isDark?'rgba(201,168,76,0.05)':'rgba(201,168,76,0.028)' }} />
 
-          {/* Orb 2 — violet, bottom-right */}
+          {/* Orb 2 — dark gold, bottom-right */}
           <motion.div className="absolute rounded-full blur-3xl"
             animate={{ x:[0,-50,25,0], y:[0,40,-20,0], scale:[1,0.9,1.08,1] }}
             transition={{ duration:25, repeat:Infinity, ease:'easeInOut', delay:3 }}
             style={{ width:600, height:600, bottom:'-10%', right:'-5%',
-              background: isDark?'rgba(139,92,246,0.06)':'rgba(139,92,246,0.03)' }} />
+              background: isDark?'rgba(175,144,55,0.05)':'rgba(175,144,55,0.025)' }} />
 
-          {/* Orb 3 — blue, center pulse */}
+          {/* Orb 3 — light gold, center pulse */}
           <motion.div className="absolute rounded-full blur-3xl"
             animate={{ scale:[1,1.2,1], opacity:[0.35,0.6,0.35] }}
             transition={{ duration:10, repeat:Infinity, ease:'easeInOut' }}
             style={{ width:500, height:500, top:'25%', left:'50%', transform:'translateX(-50%)',
-              background: isDark?'rgba(59,130,246,0.045)':'rgba(59,130,246,0.025)' }} />
+              background: isDark?'rgba(228,195,110,0.035)':'rgba(228,195,110,0.02)' }} />
 
           {/* Particles */}
           {PARTICLES.map((p, i) => (
@@ -217,8 +217,8 @@ function AnimBackground({ isDark, reduced }) {
 // ─── SolutionHeader ───────────────────────────────────────────────────────────
 function SolutionHeader({ isDark }) {
   const badgeStyle = isDark
-    ? { background:'rgba(34,211,238,0.08)',  border:'1px solid rgba(34,211,238,0.22)', color:'#67e8f9' }
-    : { background:'rgba(34,211,238,0.07)',  border:'1px solid rgba(34,211,238,0.2)',  color:'#0891b2' }
+    ? { background:'rgba(201,168,76,0.1)',  border:'1px solid rgba(201,168,76,0.3)', color:'#E4C36E' }
+    : { background:'rgba(201,168,76,0.08)', border:'1px solid rgba(201,168,76,0.28)', color:'#9E7E28' }
 
   return (
     <div className="text-center mb-16">
@@ -684,7 +684,7 @@ export default function SolutionSection() {
 
       {/* Top divider */}
       <div aria-hidden="true" className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
-        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(34,211,238,0.22)':'rgba(34,211,238,0.15)'},transparent)` }} />
+        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(201,168,76,0.22)':'rgba(201,168,76,0.15)'},transparent)` }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-40">
         <SolutionHeader isDark={isDark} />
@@ -715,7 +715,7 @@ export default function SolutionSection() {
 
       {/* Bottom divider */}
       <div aria-hidden="true" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
-        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(34,211,238,0.18)':'rgba(34,211,238,0.12)'},transparent)` }} />
+        style={{ background:`linear-gradient(to right,transparent,${isDark?'rgba(201,168,76,0.18)':'rgba(201,168,76,0.12)'},transparent)` }} />
     </section>
   )
 }

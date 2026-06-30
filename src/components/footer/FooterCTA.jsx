@@ -30,14 +30,14 @@ export default function FooterCTA({ isDark }) {
         <span
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-semibold"
           style={{
-            background: isDark ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.06)',
-            border: isDark ? '1px solid rgba(59,130,246,0.3)' : '1px solid rgba(59,130,246,0.2)',
-            color: '#3b82f6',
+            background: isDark ? 'rgba(201,168,76,0.1)' : 'rgba(201,168,76,0.07)',
+            border: isDark ? '1px solid rgba(201,168,76,0.3)' : '1px solid rgba(201,168,76,0.25)',
+            color: isDark ? '#E4C36E' : '#9E7E28',
           }}
         >
           <span
             className="w-1.5 h-1.5 rounded-full"
-            style={{ background: '#3b82f6', boxShadow: '0 0 6px rgba(59,130,246,0.7)' }}
+            style={{ background: '#C9A84C', boxShadow: '0 0 6px rgba(201,168,76,0.6)' }}
           />
           Trusted by 500+ organizations worldwide
         </span>
