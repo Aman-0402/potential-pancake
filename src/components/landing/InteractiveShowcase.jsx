@@ -1,7 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion'
-import gsap from 'gsap'
-import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useTheme } from '../../contexts/ThemeContext'
 import {
   Building2, FileText, Tag, Users, Eye, BarChart2,
@@ -9,8 +7,6 @@ import {
   AlertTriangle, TrendingUp, Download, Globe,
   ChevronLeft, ChevronRight, Bell, Copy, Zap,
 } from 'lucide-react'
-
-gsap.registerPlugin(ScrollTrigger)
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 const cv = (n, op = 1) =>
@@ -929,60 +925,40 @@ function AnimBackground({ isDark }) {
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function InteractiveShowcase() {
-  const { theme }  = useTheme()
-  const isDark     = theme === 'dark'
-  const reduced    = useReducedMotion()
-  const sectionRef = useRef(null)
+  const { theme }   = useTheme()
+  const isDark      = theme === 'dark'
+  const reduced     = useReducedMotion()
+  const wrapperRef  = useRef(null)
+  const sectionRef  = useRef(null)
   const [currentIdx, setCurrentIdx] = useState(0)
 
   useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
 
-    const mm = gsap.matchMedia()
+    const mq = window.matchMedia('(min-width: 1024px)')
 
-    mm.add('(min-width: 1024px)', () => {
-      section.style.height = '100vh'
-
-      const st = ScrollTrigger.create({
-        trigger: section,
-        start:   'top top',
-        end:     () => `+=${CHAPTERS.length * window.innerHeight}`,
-        pin:     true,
-        pinSpacing:          true,
-        anticipatePin:       1,
-        invalidateOnRefresh: true,
-        onUpdate(self) {
-          const idx = Math.min(
-            Math.floor(self.progress * CHAPTERS.length),
-            CHAPTERS.length - 1,
-          )
-          setCurrentIdx(prev => (prev !== idx ? idx : prev))
-        },
-      })
-
-      return () => {
-        st.kill()
-        section.style.height = ''
-      }
-    })
-
-    return () => {
-      mm.revert()
-      // Kill any lingering ScrollTriggers and restore body styles GSAP may have set
-      ScrollTrigger.getAll().forEach(t => t.kill())
-      document.body.style.overflow        = ''
-      document.body.style.overflowX       = ''
-      document.documentElement.style.overflow  = ''
-      document.documentElement.style.overflowX = ''
+    const update = () => {
+      if (!mq.matches) return
+      const { top } = wrapper.getBoundingClientRect()
+      const totalScroll = (CHAPTERS.length - 1) * window.innerHeight
+      const scrolled = Math.max(0, -top)
+      const progress = totalScroll > 0 ? Math.min(1, scrolled / totalScroll) : 0
+      const idx = Math.min(Math.floor(progress * CHAPTERS.length), CHAPTERS.length - 1)
+      setCurrentIdx(prev => (prev !== idx ? idx : prev))
     }
+
+    window.addEventListener('scroll', update, { passive: true })
+    update()
+    return () => window.removeEventListener('scroll', update)
   }, [])
 
   return (
+    <div ref={wrapperRef} className="relative">
     <section
       ref={sectionRef}
       aria-labelledby="showcase-heading"
-      className="relative"
+      className="relative lg:sticky lg:top-0 lg:h-screen overflow-hidden"
       style={{ background: isDark ? cv(950) : 'rgb(248,250,252)' }}
     >
       <AnimBackground isDark={isDark} />
@@ -1156,5 +1132,9 @@ export default function InteractiveShowcase() {
       <div aria-hidden="true" className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-px"
         style={{ background: `linear-gradient(to right,transparent,${isDark ? 'rgba(34,211,238,0.18)' : 'rgba(34,211,238,0.1)'},transparent)` }} />
     </section>
+
+    {/* Desktop scroll spacer — creates scroll distance for sticky pinning */}
+    <div className="hidden lg:block" style={{ height: `${(CHAPTERS.length - 1) * 100}vh` }} />
+    </div>
   )
 }
