@@ -274,9 +274,9 @@ function InfiniteMarquee({ isDark, reduced }) {
       <style>{`@keyframes marquee-x { to { transform: translateX(-50%); } }`}</style>
 
       {/* Edge fades */}
-      <div aria-hidden="true" className="absolute inset-y-0 left-0 w-28 z-10 pointer-events-none"
+      <div aria-hidden="true" className="absolute inset-y-0 left-0 w-10 z-10 pointer-events-none"
         style={{ background:`linear-gradient(to right,${cv(950)} 0%,transparent 100%)` }} />
-      <div aria-hidden="true" className="absolute inset-y-0 right-0 w-28 z-10 pointer-events-none"
+      <div aria-hidden="true" className="absolute inset-y-0 right-0 w-10 z-10 pointer-events-none"
         style={{ background:`linear-gradient(to left,${cv(950)} 0%,transparent 100%)` }} />
 
       {/* Track — doubled for seamless loop */}
