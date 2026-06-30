@@ -970,7 +970,7 @@ export default function InteractiveShowcase() {
       {/* ── Desktop: GSAP-pinned 3-column layout ────────────────────────────── */}
       <div className="hidden lg:flex flex-col h-full" style={{ position: 'relative', zIndex: 1 }}>
         {/* Compact section header */}
-        <div className="text-center px-4 pt-8 pb-4 flex-shrink-0">
+        <div className="text-center px-4 pt-24 pb-4 flex-shrink-0">
           <motion.div
             initial={{ opacity: 0, y: -12, filter: 'blur(6px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
