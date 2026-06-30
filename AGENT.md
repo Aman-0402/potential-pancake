@@ -115,10 +115,25 @@ const cv = (n, op = 1) =>
 `dark-50` → `dark-950` and `primary-300` → `primary-700` are registered in `tailwind.config.js` backed by the same CSS vars. Both `cv()` inline and Tailwind classes (`text-dark-400`, `bg-dark-900`) are valid.
 
 ### Theme
-- `ThemeContext` stores `'dark'` | `'light'` in `localStorage`, default `'dark'`
+- `ThemeContext` stores `'dark'` | `'light'` in `localStorage`, **default `'light'`**
 - Applies `html.classList.add/remove('dark')` — Tailwind picks it up
 - Read: `const { theme } = useTheme(); const isDark = theme === 'dark'`
 - Use `isDark` to branch inline styles; Tailwind handles class-based variants
+
+**Color system** — `--c-dark-*` vars are **inverted between modes** (defined in `index.css`):
+- Dark (`.dark`): warm charcoal — `dark-950` = near-black `13 11 9`, `dark-50` = warm cream
+- Light (`html:not(.dark)`): cream — `dark-950` = cream `248 246 241`, `dark-50` = charcoal
+
+So `bg-dark-950` = page background in both modes. `text-dark-100` = primary text in both modes. The scale always reads light→dark regardless of mode.
+
+**`text-white` override** — `index.css` remaps `text-white` to charcoal `rgb(28 28 30)` in light mode. Headings using `text-white` automatically adapt; no extra class needed.
+
+**Primary / accent = gold** across both modes:
+- `--c-primary-300: 232 200 120` → `--c-primary-700: 120 96 28`
+- Use `text-primary-500`, `bg-primary-500`, or `cv` equivalents for gold accents
+- Gold gradient: `linear-gradient(135deg, #e8c878 0%, #c9a84c 50%, #af9037 100%)`
+
+**No badges** — section badge pills removed from all pages. Do not add pill badges above section headings.
 
 ### Animation Patterns
 ```jsx
