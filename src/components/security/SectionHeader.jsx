@@ -3,16 +3,27 @@ import { Shield } from 'lucide-react'
 
 const EASE = [0.25, 0.4, 0.25, 1]
 
-function CharReveal({ text, style, delay = 0 }) {
+const GOLD_GRAD = {
+  background: 'linear-gradient(135deg,#C9A84C,#E4C36E)',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  backgroundClip: 'text',
+}
+
+function CharReveal({ text, delay = 0, charStyle }) {
   return (
-    <span style={{ display: 'inline', ...style }}>
+    <span style={{ display: 'inline' }}>
       {text.split('').map((ch, i) => (
         <motion.span
           key={i}
           initial={{ opacity: 0, y: 22, filter: 'blur(5px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 0.42, delay: delay + i * 0.022, ease: EASE }}
-          style={{ display: 'inline-block', whiteSpace: ch === ' ' ? 'pre' : undefined }}
+          style={{
+            display: 'inline-block',
+            whiteSpace: ch === ' ' ? 'pre' : undefined,
+            ...charStyle,
+          }}
         >{ch}</motion.span>
       ))}
     </span>
@@ -20,9 +31,10 @@ function CharReveal({ text, style, delay = 0 }) {
 }
 
 export default function SectionHeader({ isDark, inView }) {
-  const muted = isDark ? 'rgba(148,163,184,0.85)' : 'rgba(71,85,105,0.9)'
-  const line2Delay = 0.1 + 19 * 0.022   // after "Enterprise Security"
-  const line2bDelay = line2Delay + 15 * 0.022  // after "Meets Real-Time "
+  const muted    = isDark ? 'rgba(210,204,188,0.85)' : 'rgba(90,85,70,0.9)'
+  const plain    = isDark ? '#E8E4D7' : '#1C1C1E'
+  const line2Delay  = 0.1 + 19 * 0.022
+  const line2bDelay = line2Delay + 16 * 0.022
 
   return (
     <div className="text-center max-w-3xl mx-auto mb-20">
@@ -46,29 +58,11 @@ export default function SectionHeader({ isDark, inView }) {
         {inView && (
           <>
             <span style={{ display: 'block' }}>
-              <CharReveal
-                text="Enterprise Security"
-                style={{
-                  background: 'linear-gradient(135deg,#C9A84C,#E4C36E)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-                delay={0.1}
-              />
+              <CharReveal text="Enterprise Security" delay={0.1} charStyle={GOLD_GRAD} />
             </span>
-            <span style={{ display: 'block', color: isDark ? '#f1f5f9' : '#0f172a' }}>
-              <CharReveal text="Meets Real-Time " delay={line2Delay} />
-              <CharReveal
-                text="Intelligence"
-                style={{
-                  background: 'linear-gradient(135deg,#AF8E38,#C9A84C)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-                delay={line2bDelay}
-              />
+            <span style={{ display: 'block', color: plain }}>
+              <CharReveal text="Meets Real-Time " delay={line2Delay} charStyle={{ color: plain }} />
+              <CharReveal text="Intelligence" delay={line2bDelay} charStyle={GOLD_GRAD} />
             </span>
           </>
         )}
