@@ -32,9 +32,9 @@ export default function SectionHeader({ isDark, inView }) {
         transition={{ duration: 0.5, ease: EASE }}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-6"
         style={{
-          background:     isDark ? 'rgba(16,185,129,0.1)' : 'rgba(16,185,129,0.08)',
-          border:         '1px solid rgba(16,185,129,0.28)',
-          color:          isDark ? '#34d399' : '#059669',
+          background:     isDark ? 'rgba(201,168,76,0.1)'  : 'rgba(201,168,76,0.08)',
+          border:         '1px solid rgba(201,168,76,0.3)',
+          color:          isDark ? '#E4C36E' : '#9E7E28',
           backdropFilter: 'blur(14px)',
         }}
       >
@@ -49,7 +49,7 @@ export default function SectionHeader({ isDark, inView }) {
               <CharReveal
                 text="Enterprise Security"
                 style={{
-                  background: 'linear-gradient(135deg,#3b82f6,#22d3ee)',
+                  background: 'linear-gradient(135deg,#C9A84C,#E4C36E)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
@@ -62,7 +62,7 @@ export default function SectionHeader({ isDark, inView }) {
               <CharReveal
                 text="Intelligence"
                 style={{
-                  background: 'linear-gradient(135deg,#8b5cf6,#a78bfa)',
+                  background: 'linear-gradient(135deg,#AF8E38,#C9A84C)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',

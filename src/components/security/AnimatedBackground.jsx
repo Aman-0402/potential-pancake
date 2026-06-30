@@ -7,13 +7,13 @@ const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
   dur:   14 + ((i * 17) % 18),
   dx:    (((i * 13) % 22) - 11),
   dy:    -16 - ((i * 9) % 16),
-  color: ['#3b82f6','#10b981','#8b5cf6'][i % 3],
+  color: ['#C9A84C','#10b981','#E4C36E'][i % 3],
   op:    0.06 + ((i * 11) % 12) / 100,
 }))
 
 export default function AnimatedBackground({ isDark }) {
   const reduced = useReducedMotion()
-  const gc = isDark ? 'rgba(59,130,246,0.018)' : 'rgba(59,130,246,0.022)'
+  const gc = isDark ? 'rgba(201,168,76,0.022)' : 'rgba(201,168,76,0.028)'
 
   return (
     <div aria-hidden className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -25,8 +25,8 @@ export default function AnimatedBackground({ isDark }) {
       <motion.div className="absolute rounded-full"
         style={{ width: 900, height: 900, top: '-25%', left: '-10%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(59,130,246,0.08) 0%, rgba(59,130,246,0.02) 40%, transparent 70%)'
-            : 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 60%)',
+            ? 'radial-gradient(circle, rgba(201,168,76,0.08) 0%, rgba(201,168,76,0.02) 40%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 60%)',
           filter: 'blur(2px)',
         }}
         animate={reduced ? {} : { x:[0,35,-18,0], y:[0,-28,14,0] }}
@@ -45,8 +45,8 @@ export default function AnimatedBackground({ isDark }) {
       <motion.div className="absolute rounded-full"
         style={{ width: 500, height: 500, top: '25%', right: '-8%',
           background: isDark
-            ? 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 65%)'
-            : 'radial-gradient(circle, rgba(139,92,246,0.03) 0%, transparent 65%)',
+            ? 'radial-gradient(circle, rgba(175,144,55,0.06) 0%, transparent 65%)'
+            : 'radial-gradient(circle, rgba(175,144,55,0.04) 0%, transparent 65%)',
         }}
         animate={reduced ? {} : { x:[0,-18,9,0], y:[0,18,-9,0] }}
         transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
