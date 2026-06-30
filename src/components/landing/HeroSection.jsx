@@ -584,26 +584,6 @@ function FloatingCards({ isDark, reduced }) {
   )
 }
 
-// ─── Scroll Indicator ─────────────────────────────────────────────────────────
-
-function ScrollIndicator() {
-  return (
-    <motion.div
-      initial={{ opacity:0 }} animate={{ opacity:1 }}
-      transition={{ delay:2.4, duration:0.6 }}
-      className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10 select-none"
-      aria-hidden="true">
-      <span className="text-[9px] text-dark-600 uppercase tracking-[0.2em]">Scroll</span>
-      <div className="w-5 h-8 rounded-full flex items-start justify-center pt-1.5"
-        style={{ border:`1px solid ${cv(700,0.25)}` }}>
-        <motion.div className="w-1 h-1.5 rounded-full bg-dark-500"
-          animate={{ y:[0,12,0], opacity:[1,0,1] }}
-          transition={{ duration:1.9, repeat:Infinity, ease:'easeInOut' }} />
-      </div>
-    </motion.div>
-  )
-}
-
 // ─── Hero Section (main export) ───────────────────────────────────────────────
 
 export default function HeroSection() {
@@ -689,7 +669,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <ScrollIndicator />
     </section>
   )
 }
