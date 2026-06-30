@@ -8,6 +8,7 @@ import Platform from './pages/Platform'
 import Features from './pages/Features'
 import Security from './pages/Security'
 import Pricing from './pages/Pricing'
+import Verify from './pages/Verify'
 
 export default function App() {
   const { theme } = useTheme()
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/features" element={<Features />} />
           <Route path="/security" element={<Security />} />
           <Route path="/pricing"  element={<Pricing />}  />
+          <Route path="/verify"   element={<Verify />}   />
         </Routes>
       </main>
       <Footer />
